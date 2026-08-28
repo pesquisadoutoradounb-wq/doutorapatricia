@@ -40,9 +40,18 @@ export async function validarConvite(
 
   if (convite.status === "concluido") return { ok: false, status: 409 };
 
-  if (convite.status === "expirado") return { ok: false, status: 410 };
-  if (convite.expira_em && new Date(convite.expira_em).getTime() < Date.now()) {
-    await admin.from("invites").update({ status: "expirado" }).eq("id", convite.id);
+  // A expiração vale apenas para quem AINDA NÃO começou. Se o participante já
+  // acessou o link, ele pode continuar de onde parou em qualquer dispositivo,
+  // mesmo depois da data de expiração — o link é a credencial pessoal dele.
+  const jaComecou = Boolean(convite.primeiro_acesso_em);
+  const expirado =
+    convite.status === "expirado" ||
+    (convite.expira_em && new Date(convite.expira_em).getTime() < Date.now());
+
+  if (expirado && !jaComecou) {
+    if (convite.status !== "expirado") {
+      await admin.from("invites").update({ status: "expirado" }).eq("id", convite.id);
+    }
     return { ok: false, status: 410 };
   }
 

@@ -22,9 +22,10 @@ const Ctx = createContext<{
 
 async function carregar(): Promise<Estado> {
   const { data: sessao } = await supabase.auth.getSession();
-  const claim = sessao.session?.user?.app_metadata?.participant_id;
-  if (!claim) return { fase: "sem-sessao" };
+  if (!sessao.session) return { fase: "sem-sessao" };
 
+  // Confia no RLS: se a sessão carrega o claim do participante, esta consulta
+  // retorna a linha dele; senão, retorna vazio.
   const { data, error } = await supabase
     .from("participants")
     .select("id, etapa_atual, study_id, modo")

@@ -95,31 +95,38 @@ textarea {
  * Fonte um pouco menor que antes, com bastante entrelinha para leitura longa.
  */
 .pagina {
-  --nevoa: #f5f7fa;
+  --nevoa: #f6f8fb;
   --superficie: #ffffff;
-  --superficie-2: #f1f4f8;
-  --borda: #dde4ec;
-  --borda-suave: #e9eef3;
-  --tinta: #23313d;
-  --tinta-suave: #58697a;
+  --superficie-2: #eef2f7;
+  --borda: #e2e8f0;
+  --borda-suave: #eef2f6;
+  --tinta: #26333f;
+  --tinta-suave: #5b6b7a;
   --azul-tinta: #1c3852;
   --azul: #2f6690;
   --erro: #a12b2b;
   --erro-fundo: #f7ebeb;
   --sucesso: #2f6d4f;
   --sucesso-fundo: #e8f1ec;
-  --aviso-fundo: #f6f1e3;
-  --aviso-borda: #e3d6b3;
-  --anel-foco: 0 0 0 3px rgba(47, 102, 144, 0.4), 0 0 0 5px rgba(184, 145, 47, 0.28);
-  --sombra-cartao: 0 1px 2px rgba(22, 40, 58, 0.05), 0 8px 22px -14px rgba(22, 40, 58, 0.13);
+  --aviso-fundo: #f7f2e5;
+  --aviso-borda: #e6dbbc;
+  --anel-foco: 0 0 0 3px rgba(47, 102, 144, 0.38), 0 0 0 5px rgba(184, 145, 47, 0.26);
+  --sombra-cartao: 0 1px 2px rgba(22, 40, 58, 0.04), 0 18px 40px -22px rgba(22, 40, 58, 0.16);
 
   color-scheme: light;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--nevoa);
   color: var(--tinta);
   font-size: 0.9375rem;
+
+  /* Malha suave — mesma estética da tela de login, bem mais discreta */
+  background:
+    radial-gradient(42% 38% at 12% 8%, rgba(47, 102, 144, 0.1), transparent 70%),
+    radial-gradient(46% 40% at 92% 100%, rgba(184, 145, 47, 0.09), transparent 72%),
+    radial-gradient(60% 45% at 50% 30%, rgba(255, 255, 255, 0.7), transparent 75%),
+    var(--nevoa);
+  background-attachment: fixed;
 }
 .pagina h1 {
   font-size: 1.32rem;
@@ -135,6 +142,18 @@ textarea {
 }
 .pagina .regua {
   margin: var(--espaco-2) 0 var(--espaco-4);
+}
+
+/* Vidro fosco nas telas do participante (mesma técnica da tela de login) */
+.pagina .cartao {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(22, 40, 58, 0.04), 0 18px 44px -20px rgba(22, 40, 58, 0.22);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  backdrop-filter: blur(16px) saturate(1.15);
+}
+.pagina .cartao .aviso {
+  background: rgba(247, 242, 229, 0.75);
 }
 
 .pagina__conteudo {
@@ -275,9 +294,11 @@ textarea:focus-visible {
 
 /* ---------- Cabeçalho do estudo (participante) ---------- */
 .cabecalho-estudo {
-  background: var(--superficie);
-  border-bottom: 1px solid var(--borda-suave);
-  padding: var(--espaco-3) var(--espaco-4);
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  padding: var(--espaco-4) var(--espaco-4);
   text-align: center;
 }
 .cabecalho-estudo__logo {
@@ -317,11 +338,13 @@ textarea:focus-visible {
 .rodape-desconforto {
   position: sticky;
   bottom: 0;
-  background: var(--superficie);
-  border-top: 1px solid var(--borda-suave);
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
   padding: var(--espaco-3) var(--espaco-4);
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   display: flex;
   flex-direction: column;
   gap: var(--espaco-1);
