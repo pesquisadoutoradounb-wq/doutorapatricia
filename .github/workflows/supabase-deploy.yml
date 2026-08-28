@@ -18,19 +18,34 @@ jobs:
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
     steps:
+      - name: Verificar secrets
+        id: check
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_DB_PASSWORD" ] || [ -z "$PROJECT_REF" ]; then
+            echo "::notice::Secrets do Supabase ausentes (SUPABASE_ACCESS_TOKEN / SUPABASE_DB_PASSWORD / SUPABASE_PROJECT_REF). Deploy automático pulado — aplique migrations/functions manualmente ou cadastre os secrets."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.check.outputs.skip != 'true'
 
       - uses: supabase/setup-cli@v1
+        if: steps.check.outputs.skip != 'true'
         with:
           version: latest
 
       - name: Link ao projeto
+        if: steps.check.outputs.skip != 'true'
         run: supabase link --project-ref "$PROJECT_REF"
 
       - name: Aplicar migrations
+        if: steps.check.outputs.skip != 'true'
         run: supabase db push
 
       - name: Publicar Edge Functions
+        if: steps.check.outputs.skip != 'true'
         run: supabase functions deploy --project-ref "$PROJECT_REF"
 
     # Os secrets das functions (BREVO_API_KEY, BREVO_WEBHOOK_SECRET, etc.) são
