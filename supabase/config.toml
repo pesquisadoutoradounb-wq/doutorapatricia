@@ -1,0 +1,67 @@
+# Configuração local do Supabase CLI.
+# Docs: https://supabase.com/docs/guides/cli/config
+project_id = "doutorapatricia"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = [
+  "http://localhost:5173",
+  "https://pesquisadoutoradounb-wq.github.io",
+]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+
+# Participantes entram sem conta: sessão anônima trocada pelo token do convite.
+enable_anonymous_sign_ins = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+# A criação de contas de equipe é feita manualmente pela pesquisadora no painel
+# do Supabase; não há auto-cadastro pela aplicação.
+
+# ---------------------------------------------------------------------------
+# Edge Functions
+# ---------------------------------------------------------------------------
+
+[functions.iniciar-participacao]
+# Sem JWT: o participante ainda não tem sessão. Valida o token do convite.
+verify_jwt = false
+
+[functions.vincular-sessao]
+# Exige o JWT anônimo recém-criado pelo cliente.
+verify_jwt = true
+
+[functions.send-invite]
+# Exige JWT; a função ainda confere is_admin() internamente.
+verify_jwt = true
+
+[functions.brevo-webhook]
+# Chamada externa pelo Brevo; validada por BREVO_WEBHOOK_SECRET.
+verify_jwt = false

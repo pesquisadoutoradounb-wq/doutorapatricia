@@ -1,0 +1,111 @@
+/**
+ * Tokens de tema.
+ *
+ * Paleta deliberadamente calma e de baixa ativação: a tarefa central do estudo
+ * é imaginação guiada, e cor saturada / contraste agressivo / movimento
+ * interferem nela. Contraste alvo: WCAG 2.1 AA (>= 4.5:1 para texto normal).
+ *
+ * A identidade visual final (PERGUNTAR 25) altera apenas --cor-primaria e a
+ * família tipográfica de título; a estrutura permanece.
+ */
+
+:root {
+  /* Superfícies e texto — modo claro */
+  --cor-fundo: #f7f7f5;
+  --cor-superficie: #ffffff;
+  --cor-superficie-2: #efefec;
+  --cor-borda: #d9d9d4;
+  --cor-texto: #23241f;
+  --cor-texto-suave: #55564f;
+
+  /* Ação / marca (neutra por ora) */
+  --cor-primaria: #3d5a73;
+  --cor-primaria-contraste: #ffffff;
+  --cor-primaria-hover: #334c62;
+
+  /* Estados */
+  --cor-erro: #8a2e2e;
+  --cor-erro-fundo: #f6e9e9;
+  --cor-sucesso: #2f5d3f;
+  --cor-aviso-fundo: #f4efe2;
+  --cor-aviso-borda: #d8c9a3;
+
+  /* Foco visível — nunca remover outline sem substituto */
+  --anel-foco: 0 0 0 3px rgba(61, 90, 115, 0.45);
+
+  /* Tipografia */
+  --fonte-texto: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --fonte-titulo: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --tamanho-base: 1.0625rem; /* 17px — leitura confortável de instrumentos */
+  --altura-linha: 1.6;
+
+  /* Ritmo */
+  --espaco-1: 0.25rem;
+  --espaco-2: 0.5rem;
+  --espaco-3: 0.75rem;
+  --espaco-4: 1rem;
+  --espaco-6: 1.5rem;
+  --espaco-8: 2rem;
+  --espaco-12: 3rem;
+
+  --raio: 8px;
+  --largura-conteudo: 42rem;
+  --sombra-cartao: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+
+  /* Duração de transição — apenas opacidade/fade discreto */
+  --transicao: 160ms ease;
+}
+
+/* Modo escuro por preferência do sistema (quando não há escolha explícita). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cor-fundo: #1a1b18;
+    --cor-superficie: #232420;
+    --cor-superficie-2: #2c2d28;
+    --cor-borda: #3c3d37;
+    --cor-texto: #ecece6;
+    --cor-texto-suave: #b3b4ac;
+
+    --cor-primaria: #8fb3cc;
+    --cor-primaria-contraste: #16202a;
+    --cor-primaria-hover: #a6c4d8;
+
+    --cor-erro: #e8a3a3;
+    --cor-erro-fundo: #3a2626;
+    --cor-sucesso: #a6d0b4;
+    --cor-aviso-fundo: #33301f;
+    --cor-aviso-borda: #5a5236;
+
+    --anel-foco: 0 0 0 3px rgba(143, 179, 204, 0.5);
+    --sombra-cartao: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Escolha explícita de tema escuro vence a preferência do sistema. */
+:root[data-theme="dark"] {
+  --cor-fundo: #1a1b18;
+  --cor-superficie: #232420;
+  --cor-superficie-2: #2c2d28;
+  --cor-borda: #3c3d37;
+  --cor-texto: #ecece6;
+  --cor-texto-suave: #b3b4ac;
+
+  --cor-primaria: #8fb3cc;
+  --cor-primaria-contraste: #16202a;
+  --cor-primaria-hover: #a6c4d8;
+
+  --cor-erro: #e8a3a3;
+  --cor-erro-fundo: #3a2626;
+  --cor-sucesso: #a6d0b4;
+  --cor-aviso-fundo: #33301f;
+  --cor-aviso-borda: #5a5236;
+
+  --anel-foco: 0 0 0 3px rgba(143, 179, 204, 0.5);
+  --sombra-cartao: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transicao: 0ms;
+  }
+}

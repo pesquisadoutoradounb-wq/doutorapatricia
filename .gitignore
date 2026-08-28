@@ -1,0 +1,32 @@
+# --- Conteúdo sensível: NUNCA versionar (repositório é público, instrumentos pré-CEP) ---
+docs/fonte-metodologia/
+docs/marca/
+supabase/seed.local.sql
+supabase/.temp/
+supabase/.branches/
+*.instrumentos.local.*
+
+# --- Segredos ---
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# --- Dependências / build ---
+node_modules/
+dist/
+dist-ssr/
+coverage/
+playwright-report/
+test-results/
+.vite/
+
+# --- Editores / SO ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
+npm-debug.log*

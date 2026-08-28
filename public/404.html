@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Redirecionando…</title>
+    <script>
+      // GitHub Pages serve 404.html para qualquer caminho desconhecido.
+      // O app usa HashRouter, então basta devolver o visitante à raiz do app,
+      // preservando qualquer hash que ele tenha trazido.
+      (function () {
+        var base = "/doutorapatricia/";
+        var hash = window.location.hash || "";
+        window.location.replace(base + hash);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirecionando para a plataforma da pesquisa…</p>
+  </body>
+</html>
