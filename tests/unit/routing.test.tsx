@@ -33,7 +33,7 @@ describe("separação de rotas participante × admin", () => {
     window.location.hash = "#/";
     render(<App />);
     expect(
-      await screen.findByRole("heading", { name: /acesso da equipe/i }),
+      await screen.findByRole("heading", { name: /painel da pesquisa/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(/use o link enviado no seu convite/i),
@@ -58,7 +58,7 @@ describe("separação de rotas participante × admin", () => {
     window.location.hash = "#/admin/login";
     render(<App />);
     expect(
-      await screen.findByRole("heading", { name: /acesso da equipe/i }),
+      await screen.findByRole("heading", { name: /painel da pesquisa/i }),
     ).toBeInTheDocument();
   });
 });

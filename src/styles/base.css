@@ -509,6 +509,7 @@ textarea:focus-visible {
   background: var(--nevoa);
   color: var(--tinta);
   font-size: 0.9375rem;
+  color-scheme: light;
 }
 .painel h1 {
   font-size: 1.34rem;
@@ -568,14 +569,18 @@ textarea:focus-visible {
 }
 .sidebar__seletor select {
   width: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background-color: #ffffff;
+  color: #1a3852;
+  color-scheme: light;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--raio);
   min-height: 38px;
   font-size: 0.85rem;
+  padding: var(--espaco-2) var(--espaco-3);
 }
 .sidebar__seletor select option {
-  color: #16283a;
+  background-color: #ffffff;
+  color: #1a3852;
 }
 .sidebar__nav {
   display: flex;

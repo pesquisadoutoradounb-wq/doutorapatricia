@@ -68,8 +68,7 @@ export function AdminLogin() {
         </div>
 
         <div className="tela-titulo">
-          <span className="eyebrow">Painel da pesquisa</span>
-          <h1>{modo === "entrar" ? "Acesso da equipe" : "Redefinir senha"}</h1>
+          <h1>{modo === "entrar" ? "Painel da pesquisa" : "Redefinir senha"}</h1>
           <hr className="regua" />
         </div>
 

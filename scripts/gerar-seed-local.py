@@ -149,6 +149,13 @@ def main() -> int:
         out.append(f"insert into public.instrument_scale_points (instrumento, valor, rotulo) values "
                    f"('panas', {i}, {sql(t)}) on conflict (instrumento, valor) do update set rotulo = excluded.rotulo;")
 
+    out.append("\n-- ===== convite PILOTO para avaliar o fluxo do participante =====")
+    out.append("-- Link: https://pesquisadoutoradounb-wq.github.io/doutorapatricia/#/participar/00000000-0000-4000-8000-000000000001")
+    out.append("insert into public.invites (study_id, email, nome, modo, status, token) values")
+    out.append(f"  ({E1}, 'piloto.avaliacao@teste.local', 'Avaliação do fluxo', 'piloto', 'enviado',")
+    out.append("   '00000000-0000-4000-8000-000000000001')")
+    out.append("on conflict (token) do nothing;\n")
+
     SAIDA_SEED.write_text("\n".join(out) + "\n", encoding="utf-8")
     print(f"escrito {SAIDA_SEED}")
 
