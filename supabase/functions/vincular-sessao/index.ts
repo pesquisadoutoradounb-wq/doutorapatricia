@@ -58,13 +58,11 @@ Deno.serve(async (req) => {
     return respostaJson({ erro: "participante_inexistente" }, 409, origin);
   }
 
-  // Se este usuário já está ligado a OUTRO participante, recuse (evita mistura).
-  const claimAtual = authUser.app_metadata?.participant_id;
-  if (typeof claimAtual === "string" && claimAtual !== participante.id) {
-    return respostaJson({ erro: "sessao_ja_vinculada" }, 409, origin);
-  }
+  // O token do convite é a credencial e já foi validado acima: vincular (ou
+  // revincular) esta sessão anônima ao participante do token é legítimo, mesmo
+  // que a sessão trouxesse outro claim (sessão de teste antiga, etc.).
 
-  // Grava o claim imutável e liga o participante a esta sessão anônima.
+  // Grava o claim e liga o participante a esta sessão anônima.
   const { error: updErr } = await admin.auth.admin.updateUserById(authUser.id, {
     app_metadata: { participant_id: participante.id },
   });

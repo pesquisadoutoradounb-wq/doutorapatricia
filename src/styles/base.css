@@ -555,7 +555,8 @@ textarea:focus-visible {
 .sidebar__marca {
   font-family: var(--fonte-titulo);
   font-weight: 600;
-  font-size: 0.98rem;
+  font-size: 1.15rem;
+  line-height: 1.2;
   display: flex;
   flex-direction: column;
   padding: 0 var(--espaco-2);
@@ -565,7 +566,7 @@ textarea:focus-visible {
   font-weight: 400;
   font-size: 0.72rem;
   color: var(--sidebar-texto-fraco);
-  margin-top: 3px;
+  margin-top: 5px;
 }
 .sidebar__seletor select {
   width: 100%;

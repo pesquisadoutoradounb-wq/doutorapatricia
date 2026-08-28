@@ -72,6 +72,10 @@ export async function entrarComToken(token: string): Promise<ResultadoEntrada> {
   const jaVinculado = (await participantIdAtual()) === iniciar.participant_id;
 
   if (!jaVinculado) {
+    // Limpa qualquer sessão anterior (outro participante, teste antigo, expirada)
+    // antes de criar a sessão anônima deste convite — senão vincular-sessao recusa.
+    await supabase.auth.signOut().catch(() => {});
+
     const { data: anon, error: anonErr } = await supabase.auth.signInAnonymously();
     if (anonErr || !anon.user) return { ok: false, motivo: "erro_rede" };
 
