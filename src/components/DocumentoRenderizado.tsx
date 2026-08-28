@@ -60,7 +60,11 @@ export function DocumentoRenderizado({
 
   return (
     <article className="cartao documento">
-      <h1>{estado.doc.titulo}</h1>
+      <div className="tela-titulo">
+        <span className="eyebrow">Documento do estudo</span>
+        <h1>{estado.doc.titulo}</h1>
+        <hr className="regua" />
+      </div>
       <div dangerouslySetInnerHTML={{ __html: estado.doc.corpo_html }} />
       <p className="documento__versao">Versão do documento: {estado.doc.versao}</p>
     </article>

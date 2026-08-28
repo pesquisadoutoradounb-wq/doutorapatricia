@@ -27,7 +27,11 @@ export function EtapaPlaceholder() {
 
   return (
     <div className="cartao">
-      <h1>{valida ? ROTULOS[e] : "Etapa desconhecida"}</h1>
+      <div className="tela-titulo">
+        <span className="eyebrow">Etapa da pesquisa</span>
+        <h1>{valida ? ROTULOS[e] : "Etapa desconhecida"}</h1>
+        <hr className="regua" />
+      </div>
       <div className="aviso">
         Etapa <code>{etapa}</code> — ainda não implementada. O modelo de sessão,
         rotas e retomada já estão funcionando; o conteúdo dos instrumentos entra

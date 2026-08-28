@@ -9,8 +9,14 @@ export function Landing() {
     <div className="pagina">
       <main className="pagina__conteudo">
         <div className="cartao">
-          <h1>{config.estudo.titulo}</h1>
-          <p>{config.instituicao.nome} — {config.instituicao.programa}</p>
+          <div className="tela-titulo">
+            <span className="eyebrow">
+              {config.instituicao.nome} · {config.instituicao.programa}
+            </span>
+            <h1>{config.estudo.titulo}</h1>
+            <hr className="regua" />
+          </div>
+
           <p>
             A participação nesta pesquisa acontece apenas por meio de um link de
             convite individual. Se você recebeu um convite, abra o link enviado a

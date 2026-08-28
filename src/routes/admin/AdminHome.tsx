@@ -16,16 +16,24 @@ export function AdminHome() {
 
   return (
     <div className="cartao">
-      <h1>Painel da pesquisa</h1>
+      <div className="tela-titulo">
+        <span className="eyebrow">Painel da pesquisa</span>
+        <h1>Visão geral</h1>
+        <hr className="regua" />
+      </div>
+
       {perfil && (
         <p>
-          {perfil.nome ?? "Usuário"} — papel: <strong>{perfil.papel}</strong>
+          {perfil.nome ?? "Usuário"} — perfil de acesso:{" "}
+          <strong>{perfil.papel}</strong>
         </p>
       )}
+
       <div className="aviso">
-        Estrutura pronta. Gestão de convites, dashboard de status/taxa de
-        resposta e exportações entram no sub-projeto E.
+        Estrutura pronta. Gestão de convites, dashboard de status e taxa de
+        resposta, e exportações entram no sub-projeto E.
       </div>
+
       <p style={{ marginTop: "var(--espaco-6)" }}>
         <button
           type="button"

@@ -54,7 +54,11 @@ describe("separação de rotas participante × admin", () => {
   it("/admin/login mostra a área restrita da equipe", async () => {
     window.location.hash = "#/admin/login";
     render(<App />);
-    expect(await screen.findByText(/acesso da equipe/i)).toBeInTheDocument();
-    expect(screen.getByText(/participantes não usam esta tela/i)).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: /acesso da equipe/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/use o link enviado no seu convite/i),
+    ).toBeInTheDocument();
   });
 });

@@ -36,8 +36,8 @@ export function App() {
         </Route>
 
         {/* ---------- Equipe de pesquisa ---------- */}
+        <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
-          <Route path="login" element={<AdminLogin />} />
           <Route
             index
             element={
