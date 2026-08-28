@@ -69,12 +69,21 @@ export async function entrarComToken(token: string): Promise<ResultadoEntrada> {
     return { ok: false, motivo: "erro_rede" };
   }
 
-  const jaVinculado = (await participantIdAtual()) === iniciar.participant_id;
+  let claimAtual: string | null = null;
+  try {
+    claimAtual = await participantIdAtual();
+  } catch {
+    claimAtual = null;
+  }
+  const jaVinculado = claimAtual === iniciar.participant_id;
 
   if (!jaVinculado) {
-    // signInAnonymously cria uma sessão nova (substitui qualquer sessão antiga
-    // deste navegador SEM invalidar sessões do mesmo participante em outros
-    // dispositivos — o link pode ser usado em qualquer lugar para continuar).
+    // Descarta qualquer sessão presa neste navegador (teste antigo, refresh
+    // token morto, outro participante). scope 'local' NÃO invalida sessões do
+    // mesmo participante em outros dispositivos — o link continua servindo em
+    // qualquer lugar para retomar.
+    await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+
     const { data: anon, error: anonErr } = await supabase.auth.signInAnonymously();
     if (anonErr || !anon.user) return { ok: false, motivo: "erro_rede" };
 
