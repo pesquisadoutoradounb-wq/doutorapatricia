@@ -1,8 +1,11 @@
 import { supabase, participantIdAtual } from "./supabase";
 
 /**
- * Etapas do fluxo do participante (espelha o enum `participant_step` no banco).
+ * Etapas do fluxo do participante no Estudo 1 (espelha o enum `participant_step`).
  * A ordem é obrigatória; `etapa_atual` permite retomar de onde parou.
+ *
+ * Multi-estudo: por ora o enum é o do Estudo 1. Quando o Estudo 2 tiver um
+ * fluxo diferente, isto migra para uma tabela `study_steps`.
  */
 export const ETAPAS = [
   "informacoes",
@@ -22,6 +25,9 @@ export interface SessaoParticipante {
   participantId: string;
   etapaAtual: Etapa;
   modo: "piloto" | "producao";
+  studyId: string;
+  studySlug: string | null;
+  studyNome: string | null;
 }
 
 export type MotivoFalha =
@@ -38,21 +44,11 @@ interface RespostaIniciar {
   participant_id: string;
   etapa_atual: Etapa;
   modo: "piloto" | "producao";
+  study_id: string;
+  study_slug: string | null;
+  study_nome: string | null;
 }
 
-/**
- * Troca um token de convite por uma sessão de participante.
- *
- *  1. `iniciar-participacao` valida o convite e cria/recupera a linha
- *     `participants` (idempotente por invite). Não exige sessão.
- *  2. Se ainda não há sessão anônima ligada a este participante:
- *     `signInAnonymously()` cria a sessão e `vincular-sessao` grava
- *     `app_metadata.participant_id` no usuário anônimo (validando o token de novo).
- *  3. Refresh da sessão para o JWT carregar o claim.
- *
- * O token do convite é a credencial. Se a mesma pessoa reabrir o link em outro
- * dispositivo, uma nova sessão anônima é vinculada ao mesmo `participant_id`.
- */
 export async function entrarComToken(token: string): Promise<ResultadoEntrada> {
   let iniciar: RespostaIniciar;
   try {
@@ -93,14 +89,40 @@ export async function entrarComToken(token: string): Promise<ResultadoEntrada> {
       participantId: iniciar.participant_id,
       etapaAtual: iniciar.etapa_atual,
       modo: iniciar.modo,
+      studyId: iniciar.study_id,
+      studySlug: iniciar.study_slug,
+      studyNome: iniciar.study_nome,
     },
   };
 }
 
 /** Caminho da rota para uma etapa (dentro de /participar). */
 export function rotaDaEtapa(etapa: Etapa): string {
-  if (etapa === "concluido" || etapa === "encerramento") {
-    return "/participar/encerramento";
+  switch (etapa) {
+    case "informacoes":
+      return "/participar/informacoes";
+    case "tcle":
+      return "/participar/tcle";
+    case "encerramento":
+    case "concluido":
+      return "/participar/encerramento";
+    default:
+      return `/participar/etapa/${etapa}`;
   }
-  return `/participar/etapa/${etapa}`;
+}
+
+/**
+ * Avança `etapa_atual` do participante. O trigger no banco só permite avançar
+ * uma etapa por vez (ou permanecer), então isto é seguro contra pulos.
+ */
+export async function avancarEtapa(participantId: string, novaEtapa: Etapa) {
+  return supabase
+    .from("participants")
+    .update({ etapa_atual: novaEtapa })
+    .eq("id", participantId);
+}
+
+export function proximaEtapa(atual: Etapa): Etapa {
+  const i = ETAPAS.indexOf(atual);
+  return ETAPAS[Math.min(i + 1, ETAPAS.length - 1)];
 }

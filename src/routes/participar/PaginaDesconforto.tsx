@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { DocumentoRenderizado } from "../../components/DocumentoRenderizado";
+import { ExigeParticipante } from "./ExigeParticipante";
 
 /**
  * Página "Desconforto durante a pesquisa", acessível pelo rodapé de qualquer
@@ -8,13 +9,25 @@ import { DocumentoRenderizado } from "../../components/DocumentoRenderizado";
 export function PaginaDesconforto() {
   const navigate = useNavigate();
   return (
-    <div>
-      <DocumentoRenderizado slug="desconforto" fallbackTitulo="Desconforto durante a pesquisa" />
-      <p style={{ marginTop: "var(--espaco-6)" }}>
-        <button type="button" className="botao botao--secundario" onClick={() => navigate(-1)}>
-          Voltar
-        </button>
-      </p>
-    </div>
+    <ExigeParticipante>
+      {(p) => (
+        <div>
+          <DocumentoRenderizado
+            slug="desconforto"
+            studyId={p.studyId}
+            fallbackTitulo="Desconforto durante a pesquisa"
+          />
+          <p style={{ marginTop: "var(--espaco-6)" }}>
+            <button
+              type="button"
+              className="botao botao--secundario"
+              onClick={() => navigate(-1)}
+            >
+              Voltar
+            </button>
+          </p>
+        </div>
+      )}
+    </ExigeParticipante>
   );
 }

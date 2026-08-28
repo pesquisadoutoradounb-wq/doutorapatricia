@@ -55,7 +55,7 @@ export const config = {
   /** Rotas base. Mantém a separação participante × equipe explícita. */
   rotas: {
     participante: "/participar",
-    admin: "/admin",
+    painel: "/painel",
   },
 } as const;
 

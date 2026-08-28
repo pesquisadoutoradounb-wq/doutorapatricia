@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { entrarComToken, rotaDaEtapa } from "../../lib/participantSession";
+import { useParticipante } from "../../lib/participanteContexto";
 
 /**
  * Rota /participar/:token — ponto de entrada do participante.
@@ -11,6 +12,7 @@ import { entrarComToken, rotaDaEtapa } from "../../lib/participantSession";
 export function EntrarComToken() {
   const { token = "" } = useParams();
   const navigate = useNavigate();
+  const { recarregar } = useParticipante();
   const [falha, setFalha] = useState<string | null>(null);
   const jaRodou = useRef(false);
 
@@ -18,14 +20,15 @@ export function EntrarComToken() {
     if (jaRodou.current) return;
     jaRodou.current = true;
 
-    entrarComToken(token).then((r) => {
+    entrarComToken(token).then(async (r) => {
       if (r.ok) {
+        await recarregar();
         navigate(rotaDaEtapa(r.sessao.etapaAtual), { replace: true });
         return;
       }
       setFalha(r.motivo);
     });
-  }, [token, navigate]);
+  }, [token, navigate, recarregar]);
 
   if (!falha) {
     return <p role="status">Verificando seu convite…</p>;

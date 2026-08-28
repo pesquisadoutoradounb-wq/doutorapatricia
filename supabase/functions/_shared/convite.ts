@@ -9,6 +9,7 @@ export interface Convite {
   modo: "piloto" | "producao";
   expira_em: string | null;
   primeiro_acesso_em: string | null;
+  study_id: string;
 }
 
 export type ValidacaoConvite =
@@ -29,7 +30,7 @@ export async function validarConvite(
 
   const { data, error } = await admin
     .from("invites")
-    .select("id, status, modo, expira_em, primeiro_acesso_em")
+    .select("id, status, modo, expira_em, primeiro_acesso_em, study_id")
     .eq("token", token)
     .maybeSingle();
 

@@ -6,7 +6,7 @@ import { supabase } from "./supabase";
  * pré-CEP e não devem ser indexados publicamente.
  *
  * A view `documentos_estudo_publico` expõe somente a versão ativa de cada
- * documento a participantes autenticados.
+ * documento, por estudo, a participantes autenticados.
  */
 export type SlugDocumento =
   | "informacoes_gerais"
@@ -24,10 +24,12 @@ export interface DocumentoEstudo {
 
 export async function carregarDocumento(
   slug: SlugDocumento,
+  studyId: string,
 ): Promise<DocumentoEstudo | null> {
   const { data, error } = await supabase
     .from("documentos_estudo_publico")
     .select("slug, versao, titulo, corpo_html")
+    .eq("study_id", studyId)
     .eq("slug", slug)
     .maybeSingle();
 

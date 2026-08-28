@@ -4,34 +4,46 @@ import { carregarDocumento, type SlugDocumento, type DocumentoEstudo } from "../
 /**
  * Renderiza um documento do estudo carregado do Supabase.
  *
- * O corpo é HTML confiável, redigido pela equipe de pesquisa e armazenado no
- * banco (não é entrada de usuário). Ainda assim, na fase B, passará por
- * sanitização antes de gravar. Aqui, `dangerouslySetInnerHTML` é aceitável
- * porque a fonte é a própria equipe.
+ * O corpo é HTML confiável, redigido pela equipe e armazenado no banco (não é
+ * entrada de usuário). Na fase de edição (painel) passará por sanitização
+ * antes de gravar.
  */
 export function DocumentoRenderizado({
   slug,
+  studyId,
   fallbackTitulo,
+  onCarregado,
 }: {
   slug: SlugDocumento;
+  studyId: string;
   fallbackTitulo: string;
+  onCarregado?: (doc: DocumentoEstudo) => void;
 }) {
   const [estado, setEstado] = useState<
-    { fase: "carregando" } | { fase: "ok"; doc: DocumentoEstudo } | { fase: "ausente" } | { fase: "erro" }
+    | { fase: "carregando" }
+    | { fase: "ok"; doc: DocumentoEstudo }
+    | { fase: "ausente" }
+    | { fase: "erro" }
   >({ fase: "carregando" });
 
   useEffect(() => {
     let vivo = true;
-    carregarDocumento(slug)
+    carregarDocumento(slug, studyId)
       .then((doc) => {
         if (!vivo) return;
-        setEstado(doc ? { fase: "ok", doc } : { fase: "ausente" });
+        if (doc) {
+          setEstado({ fase: "ok", doc });
+          onCarregado?.(doc);
+        } else {
+          setEstado({ fase: "ausente" });
+        }
       })
       .catch(() => vivo && setEstado({ fase: "erro" }));
     return () => {
       vivo = false;
     };
-  }, [slug]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, studyId]);
 
   if (estado.fase === "carregando") {
     return <p role="status">Carregando…</p>;

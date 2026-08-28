@@ -1,10 +1,11 @@
 // Edge Function: iniciar-participacao
 //
 // Entrada:  { token: string }   (sem JWT — o participante ainda não tem sessão)
-// Saída:    { participant_id, etapa_atual, modo }
+// Saída:    { participant_id, etapa_atual, modo, study_id, study_slug, study_nome }
 //
-// Valida o convite, registra o primeiro acesso (IP/User-Agent, auditoria mínima)
-// e cria/recupera a linha `participants` de forma idempotente por convite.
+// Valida o convite, registra o primeiro acesso (IP/User-Agent) e cria/recupera
+// a linha `participants` de forma idempotente por convite, escopada ao estudo
+// do convite.
 
 import { respostaJson, corsHeaders } from "../_shared/cors.ts";
 import { supabaseAdmin } from "../_shared/supabaseAdmin.ts";
@@ -41,7 +42,12 @@ Deno.serve(async (req) => {
 
   const { convite } = v;
 
-  // Participante idempotente por convite.
+  const { data: estudo } = await admin
+    .from("studies")
+    .select("slug, nome")
+    .eq("id", convite.study_id)
+    .maybeSingle();
+
   let participante:
     | { id: string; etapa_atual: string; modo: "piloto" | "producao" }
     | null = null;
@@ -58,7 +64,7 @@ Deno.serve(async (req) => {
   if (!participante) {
     const { data, error } = await admin
       .from("participants")
-      .insert({ invite_id: convite.id, modo: convite.modo })
+      .insert({ invite_id: convite.id, modo: convite.modo, study_id: convite.study_id })
       .select("id, etapa_atual, modo")
       .single();
     if (error || !data) {
@@ -67,7 +73,6 @@ Deno.serve(async (req) => {
     participante = data as typeof participante;
   }
 
-  // Auditoria mínima do acesso + avanço de status do convite.
   const patch: Record<string, unknown> = {
     ultimo_acesso_ip: ipDoRequest(req),
     ultimo_acesso_user_agent: req.headers.get("user-agent"),
@@ -81,6 +86,9 @@ Deno.serve(async (req) => {
       participant_id: participante!.id,
       etapa_atual: participante!.etapa_atual,
       modo: participante!.modo,
+      study_id: convite.study_id,
+      study_slug: estudo?.slug ?? null,
+      study_nome: estudo?.nome ?? null,
     },
     200,
     origin,

@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { config, linkDeConvite } from "../../src/lib/config";
 
 describe("config", () => {
-  it("expõe as rotas separadas de participante e admin", () => {
+  it("expõe as rotas separadas de participante e equipe", () => {
     expect(config.rotas.participante).toBe("/participar");
-    expect(config.rotas.admin).toBe("/admin");
+    expect(config.rotas.painel).toBe("/painel");
   });
 
   it("monta o link de convite com hash routing e o token", () => {

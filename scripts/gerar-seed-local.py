@@ -107,24 +107,26 @@ def main() -> int:
     itens_ysq = ysq_itens()
     assert len(itens_ysq) == 90, f"YSQ: {len(itens_ysq)} itens extraídos"
 
+    E1 = "(select id from public.studies where slug = 'estudo-1')"
     out: list[str] = [
         "-- GERADO por scripts/gerar-seed-local.py — NÃO versionar.",
-        "-- Conteúdo pré-CEP. Conferir PERGUNTAR 1,2,9,11,12,13,14,16,17,21,22 antes da coleta.\n",
-        "-- ===== documentos do estudo =====",
+        "-- Conteúdo pré-CEP. Conferir PERGUNTAR 1,2,9,11,12,13,14,16,17,21,22 antes da coleta.",
+        "-- Requer as migrations 0001-0010 aplicadas.\n",
+        "-- ===== documentos do Estudo 1 =====",
     ]
     for slug, ver, tit, corpo in docs:
-        out.append("insert into public.study_documents (slug, versao, titulo, corpo_html, ativo) values")
-        out.append(f"  ({sql(slug)}, {sql(ver)}, {sql(tit)}, {sql(corpo)}, true)")
-        out.append("on conflict (slug, versao) do update set "
+        out.append("insert into public.study_documents (study_id, slug, versao, titulo, corpo_html, ativo) values")
+        out.append(f"  ({E1}, {sql(slug)}, {sql(ver)}, {sql(tit)}, {sql(corpo)}, true)")
+        out.append("on conflict (study_id, slug, versao) do update set "
                    "corpo_html = excluded.corpo_html, titulo = excluded.titulo, ativo = true;\n")
-    out.append("-- informacoes_gerais e desconforto: PERGUNTAR 21 e 22 — sem texto-fonte.\n")
+    out.append("-- informacoes_gerais e desconforto: PERGUNTAR 21 e 22 — sem texto-fonte; cadastrar no painel.\n")
 
     out.append("-- ===== vinhetas (texto-estímulo exato; sem título/domínio ao participante) =====")
     for i in range(10):
         vid = i + 1
         dom = 1 if vid <= 5 else 2
-        out.append("insert into public.vignettes (id, dominio, titulo_interno, conteudo_predominante, texto_estimulo) values")
-        out.append(f"  ({vid}, {dom}, {sql(titulos[vid])}, null, {sql(vinhetas[i])})")
+        out.append("insert into public.vignettes (study_id, id, dominio, titulo_interno, conteudo_predominante, texto_estimulo) values")
+        out.append(f"  ({E1}, {vid}, {dom}, {sql(titulos[vid])}, null, {sql(vinhetas[i])})")
         out.append("on conflict (id) do update set "
                    "texto_estimulo = excluded.texto_estimulo, titulo_interno = excluded.titulo_interno, "
                    "dominio = excluded.dominio;\n")

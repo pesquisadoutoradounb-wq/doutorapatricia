@@ -230,12 +230,11 @@ Levantadas na leitura dos arquivos-fonte. **Nenhuma bloqueia o sub-projeto A**;
 as marcadas 🔴 bloqueiam B/C/D.
 
 ### TCLE
-1. 🔴 Placeholders no texto-fonte a preencher: nome do orientador; duração
-   estimada; e-mail/telefone da pesquisadora; e-mail do orientador; parágrafo de
-   armazenamento/conservação/descarte; remuneração/ressarcimento; dados do
-   CEP/CHS-UnB.
-2. 🔴 Esquema de versionamento do TCLE (a fonte não tem número/data de versão).
-3. Geração do PDF da via — proposta: client-side, sem enviar dados a terceiros.
+1. ✅ Placeholders do TCLE entram como `[COLCHETES]` literais; o administrador
+   preenche no painel (Documentos → TCLE).
+2. ✅ Versionamento do TCLE: campo `versao` por documento, gerido no painel.
+3. ✅ PDF da via — via `/participar/tcle/via` + diálogo de impressão do navegador
+   (Salvar como PDF), sem enviar dados a terceiros.
 
 ### Sociodemográfico
 4. 🔴 Q8: corrigir "feração" → "federação"? Campo = lista de UFs ou texto livre?
@@ -279,10 +278,10 @@ as marcadas 🔴 bloqueiam B/C/D.
     cada tela + evento de fim de áudio + posição do áudio ao avançar).
 
 ### Páginas sem texto-fonte
-21. 🔴 Página "Informações gerais do estudo" — há texto voltado ao participante
-    (Anexo 9), ou redigir rascunho a partir do TCLE para revisão?
-22. 🔴 Página "Desconforto durante a pesquisa" — texto dedicado, ou reusar os
-    parágrafos de desconforto do encerramento + contatos do TCLE?
+21. ✅ "Informações gerais do estudo" — usar o texto do Anexo 9 como sugestão
+    editável no painel (Documentos → informações gerais). Cadastrar lá.
+22. ✅ "Desconforto durante a pesquisa" — mesmo conceito: sugestão editável no
+    painel (Documentos → desconforto). Cadastrar lá.
 23. Corpo do e-mail de convite (Brevo) — há texto do Anexo 9, ou redigir
     rascunho? (sem detalhar conteúdos dos esquemas — exigência do protocolo).
 

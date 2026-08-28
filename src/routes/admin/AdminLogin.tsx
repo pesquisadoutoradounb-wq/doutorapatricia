@@ -18,7 +18,7 @@ export function AdminLogin() {
 
   useEffect(() => {
     perfilAdminAtual().then((p) => {
-      if (p) navigate("/admin", { replace: true });
+      if (p) navigate("/painel", { replace: true });
     });
   }, [navigate]);
 
@@ -40,7 +40,7 @@ export function AdminLogin() {
       setEnviando(false);
       return;
     }
-    navigate("/admin", { replace: true });
+    navigate("/painel", { replace: true });
   }
 
   async function recuperar(e: FormEvent) {

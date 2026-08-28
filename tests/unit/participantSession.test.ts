@@ -17,8 +17,10 @@ describe("participantSession", () => {
   });
 
   it("mapeia etapas para rotas dentro de /participar", () => {
-    expect(rotaDaEtapa("tcle")).toBe("/participar/etapa/tcle");
+    expect(rotaDaEtapa("informacoes")).toBe("/participar/informacoes");
+    expect(rotaDaEtapa("tcle")).toBe("/participar/tcle");
     expect(rotaDaEtapa("ysq")).toBe("/participar/etapa/ysq");
+    expect(rotaDaEtapa("sociodemografico")).toBe("/participar/etapa/sociodemografico");
   });
 
   it("encaminha 'encerramento' e 'concluido' para a tela de encerramento", () => {
