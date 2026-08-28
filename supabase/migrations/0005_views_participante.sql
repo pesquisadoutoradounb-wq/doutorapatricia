@@ -8,24 +8,27 @@
 
 -- Documentos ativos do estudo (informações, TCLE, instruções, encerramento,
 -- desconforto). NÃO expõe versões inativas nem metadados de autoria.
-create view public.documentos_estudo_publico as
+create view public.documentos_estudo_publico with (security_invoker = false) as
   select slug, versao, titulo, corpo_html
   from public.study_documents
   where ativo;
 
+revoke all on public.documentos_estudo_publico from anon;
 grant select on public.documentos_estudo_publico to authenticated;
 
 -- Texto-estímulo das vinhetas. NUNCA expõe dominio, titulo_interno ou
 -- conteudo_predominante.
-create view public.vinhetas_participante as
+create view public.vinhetas_participante with (security_invoker = false) as
   select id, texto_estimulo
   from public.vignettes;
 
+revoke all on public.vinhetas_participante from anon;
 grant select on public.vinhetas_participante to authenticated;
 
 -- Áudios de imaginação guiada.
-create view public.audios_participante as
+create view public.audios_participante with (security_invoker = false) as
   select vignette_id, storage_path, duracao_segundos
   from public.audio_assets;
 
+revoke all on public.audios_participante from anon;
 grant select on public.audios_participante to authenticated;

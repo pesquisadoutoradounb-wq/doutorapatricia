@@ -145,7 +145,16 @@ supabase db push                   # remoto: aplica migrations pendentes ao proj
 ```
 
 Ordem atual: `0001` enums · `0002` tabelas · `0003` funções RLS · `0004`
-policies · `0005` views de participante · `0006` triggers · `0007` storage.
+policies · `0005` views de participante · `0006` triggers · `0007` storage ·
+`0008` itens de instrumento (YSQ/PANAS/escalas + views).
+
+O texto dos itens do YSQ-S3 e PANAS é conteúdo de instrumento: fica nas tabelas
+`ysq_items` / `panas_items` / `instrument_scale_points` (só admin) e é servido ao
+participante pelas views `*_participante`. Popule com:
+
+```bash
+python scripts/gerar-seed-local.py   # regenera supabase/seed.local.sql a partir de docs/fonte-metodologia/
+```
 
 Gerar tipos TypeScript do schema:
 

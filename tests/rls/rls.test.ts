@@ -135,4 +135,18 @@ describe.skipIf(!rodar)("RLS — isolamento entre participantes", () => {
       .eq("id", participantA);
     expect(r.error).toBeTruthy();
   });
+
+  it("participante não lê as tabelas-base de instrumento, só as views", async () => {
+    const cA = await sessaoParaParticipante(participantA);
+
+    // base: só admin
+    const base = await cA.from("ysq_items").select("item");
+    expect(base.data ?? []).toHaveLength(0);
+    const vBase = await cA.from("vignettes").select("id, dominio");
+    expect(vBase.data ?? []).toHaveLength(0);
+
+    // view: leitura permitida (não deve dar erro de permissão)
+    const view = await cA.from("vinhetas_participante").select("id");
+    expect(view.error).toBeNull();
+  });
 });

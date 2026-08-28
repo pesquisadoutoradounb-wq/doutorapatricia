@@ -44,3 +44,21 @@ insert into public.vignettes (id, dominio, titulo_interno, conteudo_predominante
   (9, 2, 'PLACEHOLDER 9', null, 'PLACEHOLDER — texto-estímulo da situação 9'),
   (10, 2, 'PLACEHOLDER 10', null, 'PLACEHOLDER — texto-estímulo da situação 10')
 on conflict (id) do nothing;
+
+-- ---------------------------------------------------------------------------
+-- Itens de instrumento (placeholders). Reais em seed.local.sql.
+-- ---------------------------------------------------------------------------
+insert into public.ysq_items (item, enunciado)
+  select g, 'PLACEHOLDER — enunciado do item ' || g from generate_series(1, 90) g
+on conflict (item) do nothing;
+
+insert into public.panas_items (item, termo)
+  select g, 'PLACEHOLDER ' || g from generate_series(1, 19) g
+on conflict (item) do nothing;
+
+insert into public.instrument_scale_points (instrumento, valor, rotulo) values
+  ('ysq', 1, 'PLACEHOLDER 1'), ('ysq', 2, 'PLACEHOLDER 2'), ('ysq', 3, 'PLACEHOLDER 3'),
+  ('ysq', 4, 'PLACEHOLDER 4'), ('ysq', 5, 'PLACEHOLDER 5'), ('ysq', 6, 'PLACEHOLDER 6'),
+  ('panas', 1, 'PLACEHOLDER 1'), ('panas', 2, 'PLACEHOLDER 2'), ('panas', 3, 'PLACEHOLDER 3'),
+  ('panas', 4, 'PLACEHOLDER 4'), ('panas', 5, 'PLACEHOLDER 5')
+on conflict (instrumento, valor) do nothing;
