@@ -4,10 +4,12 @@ import { entrarAdmin, perfilAdminAtual } from "../../lib/adminAuth";
 import { supabase } from "../../lib/supabase";
 import { config } from "../../lib/config";
 import { IconeEmail, IconeSenha, IconeInstituicao } from "../../components/icones";
+import { useTituloAba } from "../../lib/useTituloAba";
 
 type Modo = "entrar" | "recuperar";
 
 export function AdminLogin() {
+  useTituloAba("Login");
   const navigate = useNavigate();
   const [modo, setModo] = useState<Modo>("entrar");
   const [email, setEmail] = useState("");

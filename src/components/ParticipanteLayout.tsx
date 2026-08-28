@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { StudyHeader } from "./StudyHeader";
 import { ParticipanteProvider } from "../lib/participanteContexto";
+import { useTituloAba } from "../lib/useTituloAba";
 
 /**
  * Casca das telas do participante.
@@ -10,6 +11,7 @@ import { ParticipanteProvider } from "../lib/participanteContexto";
  * acessível de qualquer tela (requisito do protocolo ético).
  */
 export function ParticipanteLayout() {
+  useTituloAba("Pesquisa");
   const { pathname } = useLocation();
   const naPaginaDesconforto = pathname.endsWith("/desconforto");
 
