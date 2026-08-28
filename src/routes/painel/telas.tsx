@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useEstudo } from "./EstudoLayout";
-import { supabase } from "../../lib/supabase";
+import { carregarMetricas, type MetricasEstudo } from "../../lib/painelMetricas";
+import { CartaoKPI, BarrasH, Funil, LinhaTempo } from "../../components/painel/graficos";
 
 function Titulo({ secao, nome }: { secao: string; nome?: string }) {
   return (
@@ -12,38 +13,56 @@ function Titulo({ secao, nome }: { secao: string; nome?: string }) {
   );
 }
 
+function pct(n: number) {
+  return `${Math.round(n * 100)}%`;
+}
+
 export function DashboardEstudo() {
   const estudo = useEstudo();
-  const [contagem, setContagem] = useState<{ convites: number; participantes: number } | null>(null);
+  const [m, setM] = useState<MetricasEstudo | null>(null);
+  const [erro, setErro] = useState(false);
 
   useEffect(() => {
     if (!estudo) return;
-    (async () => {
-      const [c, p] = await Promise.all([
-        supabase.from("invites").select("id", { count: "exact", head: true }).eq("study_id", estudo.id),
-        supabase.from("participants").select("id", { count: "exact", head: true }).eq("study_id", estudo.id),
-      ]);
-      setContagem({ convites: c.count ?? 0, participantes: p.count ?? 0 });
-    })();
+    setM(null);
+    setErro(false);
+    carregarMetricas(estudo.id).then(setM).catch(() => setErro(true));
   }, [estudo]);
 
   return (
     <div>
       <Titulo secao="Painel" nome={estudo?.nome} />
-      <div className="metricas">
-        <div className="metrica">
-          <span className="metrica__valor">{contagem?.convites ?? "—"}</span>
-          <span className="metrica__rotulo">Convites</span>
-        </div>
-        <div className="metrica">
-          <span className="metrica__valor">{contagem?.participantes ?? "—"}</span>
-          <span className="metrica__rotulo">Participantes</span>
-        </div>
-      </div>
-      <div className="aviso" style={{ marginTop: "var(--espaco-6)" }}>
-        Taxas de resposta e conclusão, filtros por período e gráficos entram no
-        sub-projeto E.
-      </div>
+
+      {erro && <p className="erro-caixa">Não foi possível carregar os indicadores.</p>}
+      {!m && !erro && <p role="status">Carregando indicadores…</p>}
+
+      {m && (
+        <>
+          <div className="kpis">
+            <CartaoKPI valor={m.totalConvites} rotulo="Convites" />
+            <CartaoKPI valor={m.totalParticipantes} rotulo="Participantes" />
+            <CartaoKPI valor={m.concluidos} rotulo="Concluíram" />
+            <CartaoKPI
+              valor={pct(m.taxaResposta)}
+              rotulo="Taxa de resposta"
+              sub="participantes ÷ convites"
+            />
+            <CartaoKPI
+              valor={pct(m.taxaConclusao)}
+              rotulo="Taxa de conclusão"
+              sub="concluíram ÷ participantes"
+            />
+          </div>
+
+          <div className="dash-grade">
+            <Funil titulo="Funil de participação" dados={m.funil} />
+            <BarrasH titulo="Convites por status" dados={m.porStatus} />
+            <BarrasH titulo="Participantes por etapa atual" dados={m.porEtapa} />
+          </div>
+
+          <LinhaTempo titulo="Convites e conclusões ao longo do tempo" dados={m.linhaTempo} />
+        </>
+      )}
     </div>
   );
 }

@@ -63,8 +63,8 @@
   /* Tipografia */
   --fonte-texto: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   --fonte-titulo: "Spectral", Georgia, "Times New Roman", serif;
-  --tamanho-base: 1.0625rem;
-  --altura-linha: 1.62;
+  --tamanho-base: 1rem;
+  --altura-linha: 1.6;
 
   /* Ritmo */
   --espaco-1: 0.25rem;
