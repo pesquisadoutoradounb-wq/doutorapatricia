@@ -29,11 +29,14 @@ beforeEach(() => {
 });
 
 describe("separação de rotas participante × admin", () => {
-  it("a raiz explica que o acesso é por convite e não expõe o painel como fluxo", async () => {
+  it("a raiz é o login da equipe", async () => {
     window.location.hash = "#/";
     render(<App />);
     expect(
-      await screen.findByText(/link de convite individual/i),
+      await screen.findByRole("heading", { name: /acesso da equipe/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/use o link enviado no seu convite/i),
     ).toBeInTheDocument();
   });
 
@@ -51,14 +54,11 @@ describe("separação de rotas participante × admin", () => {
     ).toBeInTheDocument();
   });
 
-  it("/admin/login mostra a área restrita da equipe", async () => {
+  it("/admin/login redireciona para a raiz (login canônico)", async () => {
     window.location.hash = "#/admin/login";
     render(<App />);
     expect(
       await screen.findByRole("heading", { name: /acesso da equipe/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/use o link enviado no seu convite/i),
     ).toBeInTheDocument();
   });
 });

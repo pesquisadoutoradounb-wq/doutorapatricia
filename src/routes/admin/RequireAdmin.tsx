@@ -23,6 +23,6 @@ export function RequireAdmin({ children }: { children: ReactNode }) {
   }, []);
 
   if (estado.fase === "checando") return <p role="status">Verificando acesso…</p>;
-  if (estado.fase === "negado") return <Navigate to="/admin/login" replace />;
+  if (estado.fase === "negado") return <Navigate to="/" replace />;
   return <>{children}</>;
 }

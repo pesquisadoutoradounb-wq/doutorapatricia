@@ -40,7 +40,7 @@ export function AdminHome() {
           className="botao botao--secundario"
           onClick={async () => {
             await sairAdmin();
-            navigate("/admin/login", { replace: true });
+            navigate("/", { replace: true });
           }}
         >
           Sair

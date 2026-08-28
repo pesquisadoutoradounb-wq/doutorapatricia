@@ -8,23 +8,27 @@ import { AdminLayout } from "./components/AdminLayout";
 import { AdminLogin } from "./routes/admin/AdminLogin";
 import { AdminHome } from "./routes/admin/AdminHome";
 import { RequireAdmin } from "./routes/admin/RequireAdmin";
-import { Landing } from "./routes/Landing";
 import { NaoEncontrado } from "./routes/NaoEncontrado";
 
 /**
  * Roteamento com HashRouter (GitHub Pages, sem configuração de servidor).
  *
- * Duas árvores completamente separadas:
- *  - /participar/*  → participantes da pesquisa (sem conta, só link com token)
- *  - /admin/*       → equipe de pesquisa (Supabase Auth)
+ * A plataforma é da equipe de pesquisa: a raiz "/" É o login da equipe.
+ * Os participantes nunca passam por aqui — cada um recebe um link dedicado
+ * "/participar/:token" que retoma a pesquisa de onde parou e alimenta os
+ * dados que a equipe consulta no painel.
  *
- * Um participante nunca vê /admin; a equipe nunca passa pelo fluxo de /participar.
+ * Duas árvores completamente separadas:
+ *  - /participar/*  → participantes (sem conta, só link com token)
+ *  - / e /admin/*   → equipe de pesquisa (Supabase Auth)
  */
 export function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<Landing />} />
+        {/* Raiz = login da equipe (redireciona ao painel se já autenticado). */}
+        <Route path="/" element={<AdminLogin />} />
+        <Route path="/admin/login" element={<Navigate to="/" replace />} />
 
         {/* ---------- Participantes ---------- */}
         <Route path="/participar" element={<ParticipanteLayout />}>
@@ -35,8 +39,7 @@ export function App() {
           <Route path="desconforto" element={<PaginaDesconforto />} />
         </Route>
 
-        {/* ---------- Equipe de pesquisa ---------- */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* ---------- Painel da equipe ---------- */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route
             index

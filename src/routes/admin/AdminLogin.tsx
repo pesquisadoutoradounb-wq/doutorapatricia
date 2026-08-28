@@ -49,7 +49,7 @@ export function AdminLogin() {
     setAviso(null);
     setEnviando(true);
     await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${config.appBaseUrl}/#/admin/login`,
+      redirectTo: `${config.appBaseUrl}/#/`,
     });
     setEnviando(false);
     // Mensagem genérica — não revela se a conta existe.
