@@ -30,6 +30,15 @@
   --acao-forte: #244f6c;
   --acao-texto: #ffffff;
 
+  /* Painel ERP — zona sempre clara (fixos; não redefinir nos blocos escuros) */
+  --sidebar-bg-1: #24486a;
+  --sidebar-bg-2: #1a3852;
+  --sidebar-texto: rgba(255, 255, 255, 0.9);
+  --sidebar-texto-fraco: rgba(255, 255, 255, 0.58);
+  --sidebar-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-ativo: rgba(255, 255, 255, 0.14);
+  --sidebar-borda: rgba(255, 255, 255, 0.1);
+
   /* Dourado — acento estrutural */
   --dourado: #b8912f;
   --dourado-lavado: #efe4c4;

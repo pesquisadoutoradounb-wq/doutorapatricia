@@ -478,47 +478,100 @@ textarea:focus-visible {
 /* =====================================================================
    Painel da equipe — layout ERP (sidebar + conteúdo)
    ===================================================================== */
+/*
+ * O painel é uma ZONA SEMPRE CLARA. Redefinimos os tokens no escopo .painel
+ * para que os componentes (cartão, aviso, tabela…) fiquem claros mesmo quando
+ * o sistema está em modo escuro — e o texto nunca some. Fonte um pouco menor
+ * que o fluxo do participante (conforto de leitura em tela densa).
+ */
 .painel {
+  --nevoa: #eef1f5;
+  --superficie: #ffffff;
+  --superficie-2: #f3f5f8;
+  --borda: #dde3ea;
+  --borda-suave: #e9edf1;
+  --tinta: #21303d;
+  --tinta-suave: #5c6b78;
+  --azul-tinta: #1a3852;
+  --azul: #2f6690;
+  --erro: #a12b2b;
+  --erro-fundo: #f7ebeb;
+  --sucesso: #2f6d4f;
+  --sucesso-fundo: #e8f1ec;
+  --aviso-fundo: #f6f1e3;
+  --aviso-borda: #e3d6b3;
+  --anel-foco: 0 0 0 3px rgba(47, 102, 144, 0.4), 0 0 0 5px rgba(184, 145, 47, 0.28);
+  --sombra-cartao: 0 1px 2px rgba(22, 40, 58, 0.05), 0 8px 22px -14px rgba(22, 40, 58, 0.14);
+
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 248px 1fr;
+  background: var(--nevoa);
+  color: var(--tinta);
+  font-size: 0.9375rem;
 }
-.painel__conteudo {
-  padding: var(--espaco-8);
-  max-width: 60rem;
+.painel h1 {
+  font-size: 1.34rem;
+}
+.painel h2 {
+  font-size: 1.05rem;
+}
+.painel .eyebrow {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+}
+.painel .tela-titulo {
+  margin-bottom: var(--espaco-4);
+}
+.painel .regua {
+  margin-bottom: var(--espaco-4);
 }
 
+.painel__conteudo {
+  padding: var(--espaco-8) var(--espaco-8) var(--espaco-12);
+  max-width: 62rem;
+}
+
+/* Sidebar — azul com aspecto de vidro (tokens fixos, não seguem o tema) */
 .sidebar {
-  background: var(--azul-tinta);
-  color: #fff;
-  padding: var(--espaco-6) var(--espaco-4);
+  background:
+    linear-gradient(180deg, var(--sidebar-bg-1), var(--sidebar-bg-2));
+  border-right: 1px solid var(--sidebar-borda);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--sidebar-texto);
+  padding: var(--espaco-6) var(--espaco-3);
   display: flex;
   flex-direction: column;
   gap: var(--espaco-4);
   position: sticky;
   top: 0;
   height: 100dvh;
+  font-size: 0.9rem;
 }
 .sidebar__marca {
   font-family: var(--fonte-titulo);
   font-weight: 600;
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   display: flex;
   flex-direction: column;
+  padding: 0 var(--espaco-2);
 }
 .sidebar__marca span {
   font-family: var(--fonte-texto);
   font-weight: 400;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin-top: 2px;
+  font-size: 0.72rem;
+  color: var(--sidebar-texto-fraco);
+  margin-top: 3px;
 }
 .sidebar__seletor select {
   width: 100%;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  min-height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  min-height: 38px;
+  font-size: 0.85rem;
 }
 .sidebar__seletor select option {
   color: #16283a;
@@ -533,16 +586,16 @@ textarea:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid var(--sidebar-borda);
   padding-top: var(--espaco-4);
 }
 .sidebar__link {
   display: block;
   padding: var(--espaco-2) var(--espaco-3);
   border-radius: var(--raio);
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--sidebar-texto);
   text-decoration: none;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 500;
   background: none;
   border: 0;
@@ -551,16 +604,16 @@ textarea:focus-visible {
   width: 100%;
 }
 .sidebar__link:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--sidebar-hover);
   color: #fff;
 }
 .sidebar__link--ativo {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--sidebar-ativo);
   color: #fff;
   box-shadow: inset 3px 0 0 var(--dourado);
 }
 .sidebar__sair {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--sidebar-texto-fraco);
 }
 
 /* Métricas do dashboard */
@@ -581,11 +634,11 @@ textarea:focus-visible {
 }
 .metrica__valor {
   font-family: var(--fonte-titulo);
-  font-size: 2rem;
+  font-size: 1.75rem;
   color: var(--azul-tinta);
 }
 .metrica__rotulo {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--tinta-suave);
 }
 
