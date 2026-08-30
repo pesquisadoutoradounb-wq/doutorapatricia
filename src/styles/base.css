@@ -822,7 +822,7 @@ textarea:focus-visible {
   align-items: baseline;
   justify-content: space-between;
   gap: var(--espaco-3);
-  padding: var(--espaco-4) var(--espaco-5);
+  padding: var(--espaco-3) var(--espaco-5);
   border-bottom: 1px solid var(--borda-suave);
   background: var(--superficie-2);
 }
@@ -832,6 +832,9 @@ textarea:focus-visible {
 }
 .cartao-painel__corpo {
   padding: var(--espaco-5);
+}
+.cartao-painel__corpo > :first-child {
+  margin-top: 0;
 }
 .cartao-painel__corpo > :last-child {
   margin-bottom: 0;
@@ -848,13 +851,15 @@ textarea:focus-visible {
   gap: var(--espaco-4);
 }
 
-/* grade de cartões de formulário/ação (2 colunas em telas largas) */
-.grade-cartoes {
+/* pilha de cartões de formulário/ação — um por linha */
+.pilha-cartoes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
-  align-items: start;
   gap: var(--espaco-4);
   margin-bottom: var(--espaco-6);
+}
+/* limita a largura de leitura de um formulário dentro de um cartão largo */
+.form-limite {
+  max-width: 44rem;
 }
 .cartao--link {
   display: block;

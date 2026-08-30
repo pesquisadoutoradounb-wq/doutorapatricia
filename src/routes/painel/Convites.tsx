@@ -83,12 +83,43 @@ export function Convites() {
         <p role="status">Carregando…</p>
       ) : (
         <>
-          <div className="grade-cartoes">
+          <div className="pilha-cartoes">
+            <section className="cartao-painel">
+              <div className="cartao-painel__cabeca">
+                <h2>Link de teste (piloto)</h2>
+              </div>
+              <div className="cartao-painel__corpo form-limite">
+                <p className="documento__versao">
+                  Gera um convite piloto para testar o fluxo do participante. Não
+                  envia e-mail e não entra nas métricas de produção.
+                </p>
+                <button
+                  type="button"
+                  className="botao botao--secundario"
+                  onClick={async () => {
+                    if (!estudo) return;
+                    const r = await gerarLinkTeste(estudo.id);
+                    if (r.ok) {
+                      setLinkTeste(r.link);
+                      recarregar(estudo.id);
+                    } else setErro(r.motivo);
+                  }}
+                >
+                  Gerar link de teste
+                </button>
+                {linkTeste && (
+                  <p className="sucesso-caixa" style={{ wordBreak: "break-all" }}>
+                    {linkTeste}
+                  </p>
+                )}
+              </div>
+            </section>
+
             <section className="cartao-painel">
               <div className="cartao-painel__cabeca">
                 <h2>Adicionar convites</h2>
               </div>
-              <div className="cartao-painel__corpo">
+              <div className="cartao-painel__corpo form-limite">
                 <p className="documento__versao">
                   Um e-mail por linha, ou <code>email, nome</code> /{" "}
                   <code>email; nome</code>. Cabeçalho é ignorado.
@@ -146,40 +177,11 @@ export function Convites() {
                   onClick={enviar}
                 >
                   {enviando
-                    ? "Enviando…"
-                    : `Enviar ${parsed.linhas.length || ""} convite(s)`}
+                    ? "Cadastrando…"
+                    : parsed.linhas.length > 0
+                      ? `Cadastrar ${parsed.linhas.length} convite(s)`
+                      : "Cadastrar convite(s)"}
                 </button>
-              </div>
-            </section>
-
-            <section className="cartao-painel">
-              <div className="cartao-painel__cabeca">
-                <h2>Link de teste (piloto)</h2>
-              </div>
-              <div className="cartao-painel__corpo">
-                <p className="documento__versao">
-                  Gera um convite piloto para testar o fluxo do participante. Não
-                  envia e-mail e não entra nas métricas de produção.
-                </p>
-                <button
-                  type="button"
-                  className="botao botao--secundario"
-                  onClick={async () => {
-                    if (!estudo) return;
-                    const r = await gerarLinkTeste(estudo.id);
-                    if (r.ok) {
-                      setLinkTeste(r.link);
-                      recarregar(estudo.id);
-                    } else setErro(r.motivo);
-                  }}
-                >
-                  Gerar link de teste
-                </button>
-                {linkTeste && (
-                  <p className="sucesso-caixa" style={{ wordBreak: "break-all" }}>
-                    {linkTeste}
-                  </p>
-                )}
               </div>
             </section>
           </div>
