@@ -558,12 +558,12 @@ textarea:focus-visible {
  * que o fluxo do participante (conforto de leitura em tela densa).
  */
 .painel {
-  --nevoa: #eceff4;
+  --nevoa: #e7ebf1;
   --superficie: #ffffff;
-  --superficie-2: #f2f5f9;
-  --superficie-3: #e8edf3;
-  --borda: #dce3ec;
-  --borda-suave: #e9edf2;
+  --superficie-2: #f3f6fa;
+  --superficie-3: #e6ecf3;
+  --borda: #d3dbe6;
+  --borda-suave: #e4e9f0;
   --tinta: #21303d;
   --tinta-suave: #5c6b78;
   --azul-tinta: #1a3852;
@@ -580,8 +580,8 @@ textarea:focus-visible {
   --aviso-fundo: #f6f1e3;
   --aviso-borda: #e3d6b3;
   --anel-foco: 0 0 0 3px rgba(47, 102, 144, 0.4), 0 0 0 5px rgba(184, 145, 47, 0.28);
-  --sombra-cartao: 0 1px 2px rgba(22, 40, 58, 0.05), 0 8px 22px -14px rgba(22, 40, 58, 0.14);
-  --sombra-suave: 0 1px 2px rgba(22, 40, 58, 0.04), 0 4px 12px -8px rgba(22, 40, 58, 0.12);
+  --sombra-cartao: 0 1px 2px rgba(22, 40, 58, 0.06), 0 10px 26px -14px rgba(22, 40, 58, 0.2);
+  --sombra-suave: 0 1px 2px rgba(22, 40, 58, 0.06), 0 6px 16px -10px rgba(22, 40, 58, 0.18);
   --painel-pad: clamp(1.25rem, 1rem + 2.4vw, 2.75rem);
 
   min-height: 100dvh;
@@ -811,6 +811,7 @@ textarea:focus-visible {
   border: 1px solid var(--borda);
   border-radius: var(--raio-g);
   box-shadow: var(--sombra-suave);
+  overflow: hidden;
 }
 .cartao-painel--acento {
   border-top: 2px solid var(--acento);
@@ -823,18 +824,22 @@ textarea:focus-visible {
   gap: var(--espaco-3);
   padding: var(--espaco-4) var(--espaco-5);
   border-bottom: 1px solid var(--borda-suave);
+  background: var(--superficie-2);
 }
 .cartao-painel__cabeca :where(h2, h3) {
   margin: 0;
+  font-size: 0.98rem;
 }
 .cartao-painel__corpo {
   padding: var(--espaco-5);
+}
+.cartao-painel__corpo > :last-child {
+  margin-bottom: 0;
 }
 .cartao-painel__rodape {
   padding: var(--espaco-4) var(--espaco-5);
   border-top: 1px solid var(--borda-suave);
   background: var(--superficie-2);
-  border-radius: 0 0 var(--raio-g) var(--raio-g);
 }
 
 .lista-cartoes {
@@ -942,6 +947,7 @@ textarea:focus-visible {
   gap: var(--espaco-3);
   padding: var(--espaco-4) var(--espaco-5);
   border-bottom: 1px solid var(--borda);
+  background: var(--superficie-2);
 }
 .tabela-cartao__id {
   display: flex;
@@ -1072,7 +1078,7 @@ textarea:focus-visible {
 
 .lista-docs {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
   align-items: start;
   gap: var(--espaco-4);
 }
@@ -1080,13 +1086,23 @@ textarea:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--espaco-4);
+  gap: var(--espaco-3);
+}
+.lista-docs__cabeca > div:first-child {
+  min-width: 0;
 }
 .lista-docs__cabeca strong {
   display: block;
   color: var(--azul-tinta);
   font-family: var(--fonte-titulo);
   font-size: 1rem;
+  line-height: 1.3;
+}
+.lista-docs__cabeca .botao {
+  flex: none;
+  min-height: 38px;
+  padding: var(--espaco-2) var(--espaco-4);
+  font-size: 0.85rem;
 }
 .editor-doc {
   margin-top: var(--espaco-4);
@@ -1181,34 +1197,29 @@ textarea:focus-visible {
    ===================================================================== */
 .kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
   gap: var(--espaco-4);
+  margin-bottom: var(--espaco-4);
+}
+.kpis:last-of-type {
   margin-bottom: var(--espaco-6);
 }
 .kpi {
   position: relative;
   background: var(--superficie);
   border: 1px solid var(--borda);
-  border-radius: var(--raio-g);
+  border-left: 3px solid var(--acento);
+  border-radius: var(--raio);
   box-shadow: var(--sombra-suave);
-  padding: var(--espaco-5) var(--espaco-5) var(--espaco-4)
-    calc(var(--espaco-5) + 4px);
+  padding: var(--espaco-4) var(--espaco-5);
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  overflow: hidden;
-}
-.kpi::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 4px;
-  background: var(--acento);
+  gap: 4px;
 }
 .kpi__valor {
   font-family: var(--fonte-titulo);
-  font-size: 2rem;
-  line-height: 1.05;
+  font-size: 1.75rem;
+  line-height: 1.15;
   color: var(--azul-tinta);
   font-variant-numeric: tabular-nums;
 }
