@@ -39,9 +39,14 @@ Implementado (A → C):
   link de teste), `send-invite` + `brevo-webhook` completos, tela de
   Participantes (pseudônima, reenviar, descartar), separação piloto/produção
   nos painéis. Requer os secrets do Brevo para o envio real.
+- **E2** Exportações: aba Exportar — CSV por conjunto + JSON, anonimizado por
+  `participant_id`, respeitando piloto/produção e descartados.
+- **E3** Pontuação & resultados: escores do YSQ-S3 (18 esquemas / 5 domínios) e
+  do PANAS (PA / NA); aba Resultados com médias do grupo; escores por
+  participante nas exportações.
 
-**Próximo**: **E2** exportações anonimizadas (CSV/JSON); **E3** pontuação
-(YSQ / PANAS) + dashboards de resultado. Ver `docs/superpowers/specs/`.
+**Plataforma completa para o Estudo 1.** Pendências de conteúdo/decisão listadas
+abaixo. Passos de publicação: `docs/CHECKLIST-PUBLICACAO.md`.
 
 ---
 
@@ -278,8 +283,15 @@ sobram entram no sub-projeto D ou no auto-score.
 
 ### PANAS
 11. ✅ Instrução reescrita para referência **"neste momento"** (sem "terapeuta").
-12. ✅ 19 itens na ordem da transcrição, escala 1–5. Mapeamento item→subescala e
-    faixas de classificação **pendente** (só bloqueia o auto-score, não a coleta).
+12. ✅ 19 itens na ordem da transcrição, escala 1–5. Escore implementado como
+    **PA = itens 1–9, NA = itens 10–19** (soma e média). 🔴 As faixas da
+    pesquisadora (0–13 / 14–27 / 28–40) não fecham com 9+10 itens — aguardando
+    o áudio dela para aplicar classificação.
+
+### YSQ-S3 — pontuação
+- ✅ Escore por esquema (total + média) e domínio implementado (fórmula da folha
+  de correção). 🔴 Pontos de corte / classificação por esquema: aguardando o
+  áudio da pesquisadora.
 
 ### Vinhetas e áudio
 13. ✅ 10 áudios distintos (um por vinheta). Roteiros prontos, **gravação

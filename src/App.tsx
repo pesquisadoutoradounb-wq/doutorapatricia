@@ -17,6 +17,7 @@ import { DashboardEstudo } from "./routes/painel/telas";
 import { Convites } from "./routes/painel/Convites";
 import { Participantes } from "./routes/painel/Participantes";
 import { Exportar } from "./routes/painel/Exportar";
+import { Resultados } from "./routes/painel/Resultados";
 import { Documentos } from "./routes/painel/Documentos";
 import { Audios } from "./routes/painel/Audios";
 import { Equipe } from "./routes/painel/Equipe";
@@ -47,6 +48,7 @@ export function App() {
             <Route path="participantes" element={<Participantes />} />
             <Route path="documentos" element={<Documentos />} />
             <Route path="audios" element={<Audios />} />
+            <Route path="resultados" element={<Resultados />} />
             <Route path="exportar" element={<Exportar />} />
           </Route>
         </Route>

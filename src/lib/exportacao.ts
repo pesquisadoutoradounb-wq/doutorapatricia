@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { escorePanas, escoreYsq, mapaDeRespostas } from "./pontuacao";
 
 // ---------------------------------------------------------------------------
 // Serialização CSV
@@ -48,7 +49,9 @@ export interface ExportCompleto {
   participantes: Record<string, unknown>[];
   sociodemografico: Record<string, unknown>[];
   ysq: Record<string, unknown>[];
+  ysq_escores: Record<string, unknown>[];
   panas: Record<string, unknown>[];
+  panas_escores: Record<string, unknown>[];
   vinhetas_ordem: Record<string, unknown>[];
   vinhetas_avaliacao: Record<string, unknown>[];
   consentimento: Record<string, unknown>[];
@@ -58,11 +61,48 @@ export const CONJUNTOS: (keyof ExportCompleto)[] = [
   "participantes",
   "sociodemografico",
   "ysq",
+  "ysq_escores",
   "panas",
+  "panas_escores",
   "vinhetas_ordem",
   "vinhetas_avaliacao",
   "consentimento",
 ];
+
+function escoresYsqPorParticipante(
+  linhas: { participant_id: string; item: number; valor: number }[],
+): Record<string, unknown>[] {
+  return [...mapaDeRespostas(linhas).entries()].map(([participant_id, m]) => {
+    const e = escoreYsq(m);
+    const linha: Record<string, unknown> = { participant_id };
+    for (const s of e.esquemas) {
+      linha[`${s.chave}_total`] = s.total;
+      linha[`${s.chave}_media`] = s.media;
+    }
+    for (const d of e.dominios) {
+      linha[`dominio${d.indice}_total`] = d.total;
+      linha[`dominio${d.indice}_media`] = d.media;
+    }
+    return linha;
+  });
+}
+
+function escoresPanasPorParticipante(
+  linhas: { participant_id: string; item: number; valor: number }[],
+): Record<string, unknown>[] {
+  return [...mapaDeRespostas(linhas).entries()].map(([participant_id, m]) => {
+    const e = escorePanas(m);
+    return {
+      participant_id,
+      pa_total: e.paTotal,
+      na_total: e.naTotal,
+      pa_media: e.paMedia,
+      na_media: e.naMedia,
+      pa_respondidos: e.paRespondidos,
+      na_respondidos: e.naRespondidos,
+    };
+  });
+}
 
 async function selecionarPorParticipante(
   tabela: string,
@@ -118,6 +158,9 @@ export async function carregarExport(
         respondido_em: r.respondido_em,
       })),
     ),
+    ysq_escores: escoresYsqPorParticipante(
+      ysq as { participant_id: string; item: number; valor: number }[],
+    ),
     panas: renomeiaId(
       panas.map((r) => ({
         participant_id: r.participant_id,
@@ -125,6 +168,9 @@ export async function carregarExport(
         valor: r.valor,
         respondido_em: r.respondido_em,
       })),
+    ),
+    panas_escores: escoresPanasPorParticipante(
+      panas as { participant_id: string; item: number; valor: number }[],
     ),
     vinhetas_ordem: renomeiaId(ordem),
     vinhetas_avaliacao: renomeiaId(aval),
