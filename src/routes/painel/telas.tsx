@@ -81,15 +81,3 @@ export function DashboardEstudo() {
   );
 }
 
-export function Exportar() {
-  const estudo = useEstudo();
-  return (
-    <div>
-      <Titulo secao="Exportar" nome={estudo?.nome} />
-      <div className="aviso">
-        Exportação anonimizada (por <code>participant_id</code>, sem e-mail/nome)
-        de sociodemográfico, YSQ, PANAS e vinhetas em CSV/XLSX — sub-projeto E.
-      </div>
-    </div>
-  );
-}
