@@ -35,10 +35,13 @@ Implementado (A → C):
   bloco de vinhetas (estímulo → áudio → avaliação pós-imaginação condicional),
   captura de tempos, encerramento (fecha a participação). Painel: upload de
   áudio por vinheta.
+- **E1** Recrutamento & operação: tela de Convites (colar/CSV, status, reenviar,
+  link de teste), `send-invite` + `brevo-webhook` completos, tela de
+  Participantes (pseudônima, reenviar, descartar), separação piloto/produção
+  nos painéis. Requer os secrets do Brevo para o envio real.
 
-**Próximo**: sub-projeto E — gestão de convites/CSV, integração Brevo,
-exportações; e o auto-score/dashboards de resultado. Ver
-`docs/superpowers/specs/`.
+**Próximo**: **E2** exportações anonimizadas (CSV/JSON); **E3** pontuação
+(YSQ / PANAS) + dashboards de resultado. Ver `docs/superpowers/specs/`.
 
 ---
 
@@ -159,7 +162,9 @@ policies · `0005` views de participante · `0006` triggers · `0007` storage ·
 `0010` estudo público + consentimento · `0011` estados terminais do participante
 (`inelegivel`/`interrompido`) + resultado de elegibilidade · `0012` transições
 para os estados terminais · `0013` tarefa experimental (`q12_matriz` + RPCs
-`gerar_ordem_vinhetas` / `concluir_participacao`).
+`gerar_ordem_vinhetas` / `concluir_participacao`) · `0014` recrutamento
+(`participants.descartado` + RPCs `definir_descarte` / `criar_convite_piloto`;
+`convite_email` fora da view pública).
 
 O texto dos itens do YSQ-S3 e PANAS é conteúdo de instrumento: fica nas tabelas
 `ysq_items` / `panas_items` / `instrument_scale_points` (só admin) e é servido ao

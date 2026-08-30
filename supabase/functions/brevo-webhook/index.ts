@@ -1,11 +1,12 @@
-// Edge Function: brevo-webhook  (STUB parcial — completa no sub-projeto E)
+// Edge Function: brevo-webhook
 //
-// Recebe eventos do Brevo (entregue/aberto/clicado/bounce/spam) e grava em
-// `email_events`, atualizando o status agregado do convite. Validado por um
-// segredo compartilhado (BREVO_WEBHOOK_SECRET) passado como query string ?s=
-// ou cabeçalho, já que o Brevo não assina os webhooks.
+// Recebe os eventos do Brevo e grava em `email_events`, ligados ao convite pela
+// tag enviada em `send-invite` (payload.tags[0]). Não altera `invites.status` —
+// essa escada é dirigida pela plataforma. Validado por BREVO_WEBHOOK_SECRET em
+// `?s=` ou no cabeçalho `x-webhook-secret` (o Brevo não assina webhooks).
 
 import { supabaseAdmin } from "../_shared/supabaseAdmin.ts";
+import { tipoEventoBrevo, inviteIdDaTag } from "../_shared/brevoEventos.ts";
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") {
@@ -25,11 +26,21 @@ Deno.serve(async (req) => {
     return new Response("bad request", { status: 400 });
   }
 
-  // Mapeamento completo Brevo -> email_event_type entra no sub-projeto E.
+  const tipo = tipoEventoBrevo(payload["event"]);
+  const inviteId = inviteIdDaTag(payload);
+
+  const ts =
+    typeof payload["date"] === "string"
+      ? new Date(payload["date"] as string).toISOString()
+      : typeof payload["ts"] === "number"
+        ? new Date((payload["ts"] as number) * 1000).toISOString()
+        : new Date().toISOString();
+
   const admin = supabaseAdmin();
   await admin.from("email_events").insert({
-    invite_id: null,
-    tipo: "outro",
+    invite_id: inviteId,
+    tipo,
+    ocorrido_em: ts,
     payload,
   });
 

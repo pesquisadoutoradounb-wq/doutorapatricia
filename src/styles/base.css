@@ -761,6 +761,46 @@ textarea:focus-visible {
   letter-spacing: 0.06em;
   color: var(--tinta-suave);
 }
+.tabela__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  white-space: nowrap;
+}
+.link-acao {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--azul);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.link-acao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.link-acao--perigo {
+  color: var(--erro);
+}
+.tabela .linha--descartada {
+  opacity: 0.55;
+}
+
+/* Alternador "incluir pilotos" */
+.alternador-modo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-size: 0.9rem;
+  color: var(--tinta-suave);
+  cursor: pointer;
+}
+.alternador-modo input {
+  width: auto;
+  min-height: 0;
+}
 
 .lista-docs {
   display: grid;

@@ -96,7 +96,7 @@ Fluxo:
    estende `expira_em`.
 4. Renderiza o HTML: carrega `convite_email` ativo do estudo; substitui
    `{{nome}}` (ou "participante") e `{{link}}` =
-   `${APP_PUBLIC_URL}/#/participar/${token}`.
+   `${APP_BASE_URL}/#/participar/${token}`.
 5. `POST https://api.brevo.com/v3/smtp/email` com header `api-key: BREVO_API_KEY`,
    `sender { name: BREVO_SENDER_NAME, email: BREVO_SENDER_EMAIL }`,
    `to [{ email, name }]`, `subject` = título do documento, `htmlContent`,
@@ -106,7 +106,7 @@ Fluxo:
 7. Retorno: `{ criados, enviados, erros: [{ email, motivo }] }`.
 
 Secrets novos: `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME`,
-`APP_PUBLIC_URL`. Sem `BREVO_API_KEY` a função responde 501
+`APP_BASE_URL`. Sem `BREVO_API_KEY` a função responde 501
 `brevo_nao_configurado` e **não** cria convites (evita convite órfão sem e-mail).
 
 ### `brevo-webhook` (verify_jwt = false, segredo em `?s=`)
@@ -161,7 +161,7 @@ src/routes/painel/Participantes.tsx                (substitui o stub)
   de Convites mostram e-mail; **Participantes nunca mostra e-mail/nome** — só o
   pseudônimo e o progresso.
 - O webhook não é autenticado pelo Brevo → segredo em `?s=` (já implementado).
-- `APP_PUBLIC_URL` e credenciais Brevo são secrets de function, nunca no bundle.
+- `APP_BASE_URL` e credenciais Brevo são secrets de function, nunca no bundle.
 
 ## Tratamento de erros
 

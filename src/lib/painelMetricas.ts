@@ -15,6 +15,7 @@ export interface MetricasEstudo {
   porStatus: { rotulo: string; valor: number }[];
   porEtapa: { rotulo: string; valor: number }[];
   linhaTempo: { data: string; convites: number; concluidos: number }[];
+  email: { entregues: number; aberturas: number; bounces: number };
 }
 
 const ROTULO_STATUS: Record<string, string> = {
@@ -46,20 +47,44 @@ function diaISO(ts: string | null): string | null {
   return new Date(ts).toISOString().slice(0, 10);
 }
 
-export async function carregarMetricas(studyId: string): Promise<MetricasEstudo> {
+export async function carregarMetricas(
+  studyId: string,
+  { incluirPiloto = false }: { incluirPiloto?: boolean } = {},
+): Promise<MetricasEstudo> {
+  let qInvites = supabase
+    .from("invites")
+    .select("id, status, enviado_em, primeiro_acesso_em, criado_em")
+    .eq("study_id", studyId);
+  let qParticipantes = supabase
+    .from("participants")
+    .select("etapa_atual, criado_em, concluido_em")
+    .eq("study_id", studyId)
+    .eq("descartado", false);
+  if (!incluirPiloto) {
+    qInvites = qInvites.eq("modo", "producao");
+    qParticipantes = qParticipantes.eq("modo", "producao");
+  }
+
   const [{ data: invites }, { data: participantes }] = await Promise.all([
-    supabase
-      .from("invites")
-      .select("status, enviado_em, primeiro_acesso_em, criado_em")
-      .eq("study_id", studyId),
-    supabase
-      .from("participants")
-      .select("etapa_atual, criado_em, concluido_em")
-      .eq("study_id", studyId),
+    qInvites,
+    qParticipantes,
   ]);
 
   const inv = invites ?? [];
   const par = participantes ?? [];
+
+  const email = { entregues: 0, aberturas: 0, bounces: 0 };
+  if (inv.length > 0) {
+    const { data: eventos } = await supabase
+      .from("email_events")
+      .select("tipo")
+      .in("invite_id", inv.map((i) => i.id));
+    for (const e of eventos ?? []) {
+      if (e.tipo === "entregue") email.entregues++;
+      else if (e.tipo === "aberto") email.aberturas++;
+      else if (e.tipo === "bounce") email.bounces++;
+    }
+  }
 
   const totalConvites = inv.length;
   const totalParticipantes = par.length;
@@ -129,5 +154,6 @@ export async function carregarMetricas(studyId: string): Promise<MetricasEstudo>
     porStatus,
     porEtapa,
     linhaTempo,
+    email,
   };
 }

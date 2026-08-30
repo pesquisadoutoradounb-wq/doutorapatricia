@@ -30,7 +30,9 @@ insert into public.study_documents (slug, versao, titulo, corpo_html, ativo) val
   ('panas_instrucoes', 'placeholder-0', 'Instruções — Escala de Afetos (PANAS)',
    '<p><strong>PLACEHOLDER.</strong> Instrução da PANAS reescrita para "neste momento" (PERGUNTAR 11).</p>', true),
   ('inelegibilidade', 'placeholder-0', 'Agradecemos seu interesse',
-   '<p><strong>PLACEHOLDER.</strong> Mensagem de encerramento por inelegibilidade fornecida pela pesquisadora (PERGUNTAR 7).</p>', true)
+   '<p><strong>PLACEHOLDER.</strong> Mensagem de encerramento por inelegibilidade fornecida pela pesquisadora (PERGUNTAR 7).</p>', true),
+  ('convite_email', 'placeholder-0', 'Convite para participar de uma pesquisa da UnB',
+   '<p><strong>PLACEHOLDER.</strong> Corpo do e-mail de convite. Use {{nome}} e {{link}}.</p>', true)
 on conflict (slug, versao) do nothing;
 
 -- ---------------------------------------------------------------------------

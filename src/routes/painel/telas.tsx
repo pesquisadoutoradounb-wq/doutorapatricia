@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useEstudo } from "./EstudoLayout";
 import { carregarMetricas, type MetricasEstudo } from "../../lib/painelMetricas";
 import { CartaoKPI, BarrasH, Funil, LinhaTempo } from "../../components/painel/graficos";
+import { AlternadorModo } from "../../components/painel/AlternadorModo";
 
 function Titulo({ secao, nome }: { secao: string; nome?: string }) {
   return (
@@ -21,17 +22,24 @@ export function DashboardEstudo() {
   const estudo = useEstudo();
   const [m, setM] = useState<MetricasEstudo | null>(null);
   const [erro, setErro] = useState(false);
+  const [incluirPiloto, setIncluirPiloto] = useState(false);
 
   useEffect(() => {
     if (!estudo) return;
     setM(null);
     setErro(false);
-    carregarMetricas(estudo.id).then(setM).catch(() => setErro(true));
-  }, [estudo]);
+    carregarMetricas(estudo.id, { incluirPiloto })
+      .then(setM)
+      .catch(() => setErro(true));
+  }, [estudo, incluirPiloto]);
 
   return (
     <div>
       <Titulo secao="Painel" nome={estudo?.nome} />
+
+      <div style={{ margin: "0 0 var(--espaco-4)" }}>
+        <AlternadorModo incluirPiloto={incluirPiloto} onChange={setIncluirPiloto} />
+      </div>
 
       {erro && <p className="erro-caixa">Não foi possível carregar os indicadores.</p>}
       {!m && !erro && <p role="status">Carregando indicadores…</p>}
@@ -54,6 +62,12 @@ export function DashboardEstudo() {
             />
           </div>
 
+          <div className="kpis">
+            <CartaoKPI valor={m.email.entregues} rotulo="E-mails entregues" />
+            <CartaoKPI valor={m.email.aberturas} rotulo="Aberturas de e-mail" />
+            <CartaoKPI valor={m.email.bounces} rotulo="Bounces" />
+          </div>
+
           <div className="dash-grade">
             <Funil titulo="Funil de participação" dados={m.funil} />
             <BarrasH titulo="Convites por status" dados={m.porStatus} />
@@ -63,34 +77,6 @@ export function DashboardEstudo() {
           <LinhaTempo titulo="Convites e conclusões ao longo do tempo" dados={m.linhaTempo} />
         </>
       )}
-    </div>
-  );
-}
-
-export function Convites() {
-  const estudo = useEstudo();
-  return (
-    <div>
-      <Titulo secao="Convites" nome={estudo?.nome} />
-      <div className="aviso">
-        Importar CSV, disparar convites em lote via Brevo e o quadro de status
-        (enviado / entregue / aberto / iniciado / concluído) entram no
-        sub-projeto E.
-      </div>
-    </div>
-  );
-}
-
-export function Participantes() {
-  const estudo = useEstudo();
-  return (
-    <div>
-      <Titulo secao="Participantes" nome={estudo?.nome} />
-      <div className="aviso">
-        Lista de participantes por <code>participant_id</code> pseudônimo, etapa
-        atual e progresso — sem nome/e-mail nesta tela operacional. Entra no
-        sub-projeto E.
-      </div>
     </div>
   );
 }

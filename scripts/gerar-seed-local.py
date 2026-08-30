@@ -90,6 +90,19 @@ PANAS_INSTRUCAO = [
     "Leia cada item e indique, de 1 a 5, em que medida cada palavra descreve "
     "como você realmente se sente neste momento.",
 ]
+CONVITE_EMAIL = [
+    "Olá, {{nome}}.",
+    "Você está sendo convidado(a) a participar de uma pesquisa de doutorado do "
+    "Programa de Pós-Graduação em Psicologia Clínica e Cultura da Universidade "
+    "de Brasília (UnB).",
+    "A participação é on-line, individual e voluntária, e pode ser interrompida "
+    "a qualquer momento. As primeiras telas apresentam as informações completas "
+    "sobre o estudo e o Termo de Consentimento Livre e Esclarecido.",
+    "Para começar (ou continuar de onde parou), acesse seu link individual:",
+    "{{link}}",
+    "Este link é pessoal e não deve ser compartilhado. Em caso de dúvida, "
+    "responda a este e-mail.",
+]
 INELEGIBILIDADE = [
     "Agradecemos seu interesse em participar desta pesquisa.",
     "Com base nas informações fornecidas no questionário inicial, verificamos "
@@ -146,6 +159,9 @@ def main() -> int:
          paras_html(PANAS_INSTRUCAO)),
         ("inelegibilidade", "fonte-2026-08", "Agradecemos seu interesse",
          paras_html(INELEGIBILIDADE)),
+        ("convite_email", "rascunho-2026-08",
+         "Convite para participar de uma pesquisa da UnB",
+         paras_html(CONVITE_EMAIL)),
     ]
 
     itens_ysq = ysq_itens()

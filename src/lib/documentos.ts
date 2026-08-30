@@ -16,7 +16,8 @@ export type SlugDocumento =
   | "desconforto"
   | "ysq_instrucoes"
   | "panas_instrucoes"
-  | "inelegibilidade";
+  | "inelegibilidade"
+  | "convite_email";
 
 export interface DocumentoEstudo {
   slug: SlugDocumento;

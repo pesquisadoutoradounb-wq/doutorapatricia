@@ -47,6 +47,11 @@ export const SLUGS_DOCUMENTO: {
     rotulo: "Mensagem de inelegibilidade",
     nota: "Exibida a quem não atende aos critérios no questionário inicial.",
   },
+  {
+    slug: "convite_email",
+    rotulo: "E-mail de convite",
+    nota: "Corpo HTML do e-mail enviado pelo Brevo. Placeholders: {{nome}} e {{link}}. O título deste documento vira o assunto do e-mail.",
+  },
 ];
 
 export async function carregarDocsDoEstudo(
