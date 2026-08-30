@@ -110,22 +110,22 @@ upload (best-effort; nullable).
 
 ```
 src/lib/vinhetas/
-  avaliacaoPosImaginacao.ts   schema das ~12 questões + lógica de desvio (puro)
-  vinhetasFluxo.ts            carga (RPC ordem, textos, áudios, respostas) + posição atual
-  escalas.ts                  definição das escalas 0–10 e −5..+5
+  avaliacaoPosImaginacao.ts   schema das ~14 questões + escalas + desvios + marcaBranco (puro)
+  vinhetasFluxo.ts            carga (RPC ordem, textos, áudios, respostas) + proximaPosicao + gravação
+src/lib/audiosAdmin.ts        carga/upload dos áudios pelo painel
 
 src/components/participar/
-  EscalaNumerica.tsx          régua de botões 0–10 ou −5..+5 (rótulos nas pontas)
-  MatrizEmocoes.tsx           n linhas rotuladas, cada uma uma EscalaNumerica 0–10
-  TocadorAudio.tsx            <audio> + gating "continuar ao terminar" / escape 10 s + telemetria
+  EscalaNumerica.tsx          régua de rádios 0–10 ou −5..+5 (0 e negativos são válidos)
+  MatrizEmocoes.tsx           n linhas rotuladas, cada uma uma EscalaNumerica 0–10 (+ "Outra")
+  TocadorAudio.tsx            <audio> + "continuar ao terminar" / escape 10 s + telemetria
 
 src/routes/participar/
   Instrucoes.tsx              doc `instrucoes_gerais` + "Iniciar" → RPC ordem → etapa 'vinhetas'
   Vinhetas.tsx                controlador: posição + sub-etapa (estimulo|audio|avaliacao)
-  (Encerramento.tsx)          + chama RPC concluir_participacao ao montar
+  AvaliacaoPosImaginacao.tsx  form condicional + autosave + modal de abandono (de C)
+  Encerramento.tsx            + chama RPC concluir_participacao ao montar
 
-src/routes/painel/
-  Audios.tsx                  lista as 10 vinhetas + upload de 1 áudio cada
+src/routes/painel/Audios.tsx  lista as 10 vinhetas + upload de 1 áudio cada
 ```
 
 `EtapaInstrumento` (de C) passa a despachar `instrucoes` → `Instrucoes` e

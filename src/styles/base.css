@@ -1306,3 +1306,99 @@ textarea:focus-visible {
   gap: var(--espaco-3);
   margin-top: var(--espaco-6);
 }
+
+/* =========================================================================
+   Tarefa experimental de imaginação (sub-projeto D)
+   ========================================================================= */
+
+.vinheta-estimulo {
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+/* ---------- Tocador de áudio ---------- */
+.tocador-audio {
+  display: grid;
+  gap: var(--espaco-4);
+}
+.tocador-audio audio {
+  width: 100%;
+}
+.tocador-audio__nota {
+  font-size: 0.95rem;
+  color: var(--tinta-suave);
+}
+
+/* ---------- Régua numérica (0–10, −5..+5) ---------- */
+.escala-num {
+  display: grid;
+  gap: var(--espaco-2);
+}
+.escala-num__ponta {
+  font-size: 0.85rem;
+  color: var(--tinta-suave);
+}
+.escala-num__pontos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-1);
+}
+.escala-num__ponto {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  min-height: 42px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+.escala-num__ponto:has(input:checked) {
+  border-color: var(--azul);
+  background: var(--azul);
+  color: var(--acao-texto);
+}
+.escala-num__ponto:focus-within {
+  box-shadow: var(--anel-foco);
+}
+.escala-num__ponto input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.escala-num--compacta .escala-num__ponto {
+  min-width: 34px;
+  min-height: 34px;
+  font-size: 0.85rem;
+}
+.escala-num--branco .escala-num__pontos {
+  outline: 2px solid var(--aviso-borda);
+  outline-offset: 3px;
+  border-radius: var(--raio);
+}
+
+/* ---------- Matriz de emoções / tendências ---------- */
+.matriz-emocoes {
+  display: grid;
+  gap: var(--espaco-3);
+  margin-top: var(--espaco-2);
+}
+.matriz-emocoes__linha {
+  display: grid;
+  gap: var(--espaco-2);
+  padding: var(--espaco-3);
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio);
+}
+.matriz-emocoes__rotulo {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.matriz-emocoes__linha--outra input[type="text"] {
+  max-width: 20rem;
+}

@@ -32,6 +32,21 @@ export const SLUGS_DOCUMENTO: {
     rotulo: "Página “Desconforto durante a pesquisa”",
     nota: "Sugestão: orientações éticas + contatos do TCLE. Edite ou mantenha.",
   },
+  {
+    slug: "ysq_instrucoes",
+    rotulo: "Instruções — Questionário de Esquemas (YSQ-S3)",
+    nota: "Aparece no topo do YSQ. Some se ficar em branco (a escala já basta).",
+  },
+  {
+    slug: "panas_instrucoes",
+    rotulo: "Instruções — Escala de Afetos (PANAS)",
+    nota: "Reescrita aprovada: referência “neste momento” (sem “terapeuta”).",
+  },
+  {
+    slug: "inelegibilidade",
+    rotulo: "Mensagem de inelegibilidade",
+    nota: "Exibida a quem não atende aos critérios no questionário inicial.",
+  },
 ];
 
 export async function carregarDocsDoEstudo(

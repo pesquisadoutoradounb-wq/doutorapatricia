@@ -155,7 +155,7 @@ def main() -> int:
     out: list[str] = [
         "-- GERADO por scripts/gerar-seed-local.py — NÃO versionar.",
         "-- Conteúdo pré-CEP. Conferir PERGUNTAR 1,2,9,11,12,13,14,16,17,21,22 antes da coleta.",
-        "-- Requer as migrations 0001-0012 aplicadas.\n",
+        "-- Requer as migrations 0001-0013 aplicadas.\n",
         "-- ===== documentos do Estudo 1 =====",
     ]
     for slug, ver, tit, corpo in docs:

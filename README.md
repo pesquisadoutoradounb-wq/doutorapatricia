@@ -31,10 +31,14 @@ Implementado (A → C):
 - **C** Coleta dos instrumentos basais: sociodemográfico (com elegibilidade),
   YSQ-S3 (90 itens em blocos), PANAS, modal de abandono, estados terminais
   `inelegivel` / `interrompido`. Sem auto-score (peça posterior).
+- **D** Tarefa experimental: instruções + sorteio da ordem das 10 vinhetas,
+  bloco de vinhetas (estímulo → áudio → avaliação pós-imaginação condicional),
+  captura de tempos, encerramento (fecha a participação). Painel: upload de
+  áudio por vinheta.
 
-**Próximo**: sub-projeto D — instruções, randomização e telas de vinheta/áudio,
-avaliação pós-imaginação, encerramento, captura de tempos. Depois: gestão de
-convites, exportações, integração Brevo. Ver `docs/superpowers/specs/`.
+**Próximo**: sub-projeto E — gestão de convites/CSV, integração Brevo,
+exportações; e o auto-score/dashboards de resultado. Ver
+`docs/superpowers/specs/`.
 
 ---
 
@@ -154,7 +158,8 @@ policies · `0005` views de participante · `0006` triggers · `0007` storage ·
 `0008` itens de instrumento (YSQ/PANAS/escalas + views) · `0009` multi-estudo ·
 `0010` estudo público + consentimento · `0011` estados terminais do participante
 (`inelegivel`/`interrompido`) + resultado de elegibilidade · `0012` transições
-para os estados terminais.
+para os estados terminais · `0013` tarefa experimental (`q12_matriz` + RPCs
+`gerar_ordem_vinhetas` / `concluir_participacao`).
 
 O texto dos itens do YSQ-S3 e PANAS é conteúdo de instrumento: fica nas tabelas
 `ysq_items` / `panas_items` / `instrument_scale_points` (só admin) e é servido ao
@@ -294,8 +299,10 @@ sobram entram no sub-projeto D ou no auto-score.
     volta às questões, "Sim" leva ao estado terminal `interrompido`. 1 em branco
     = aviso inline. Vale para todas as telas de instrumento. (Implementado em C
     para o sociodemográfico/YSQ/PANAS; a avaliação pós-imaginação herda em D.)
-20. 🔴 Granularidade da captura de tempos — a pesquisadora não entendeu a
-    proposta; explicar de forma simples e confirmar (entra em D).
+20. ✅ Captura de tempos implementada (timestamps de cada sub-tela + início/fim
+    do áudio + duração ouvida + `audio_completou` + início/envio da avaliação).
+    **Explicar em linguagem simples à pesquisadora** para confirmar (texto no
+    spec de D).
 
 ### Páginas sem texto-fonte
 21. ✅ "Informações gerais do estudo" — usar o texto do Anexo 9 como sugestão

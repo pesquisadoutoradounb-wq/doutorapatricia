@@ -8,6 +8,7 @@ const SECOES = [
   { to: "convites", rotulo: "Convites" },
   { to: "participantes", rotulo: "Participantes" },
   { to: "documentos", rotulo: "Documentos" },
+  { to: "audios", rotulo: "Áudios" },
   { to: "exportar", rotulo: "Exportar" },
 ];
 

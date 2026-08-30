@@ -15,6 +15,7 @@ import { ListaEstudos } from "./routes/painel/ListaEstudos";
 import { EstudoLayout } from "./routes/painel/EstudoLayout";
 import { DashboardEstudo, Convites, Participantes, Exportar } from "./routes/painel/telas";
 import { Documentos } from "./routes/painel/Documentos";
+import { Audios } from "./routes/painel/Audios";
 import { Equipe } from "./routes/painel/Equipe";
 import { NaoEncontrado } from "./routes/NaoEncontrado";
 
@@ -42,6 +43,7 @@ export function App() {
             <Route path="convites" element={<Convites />} />
             <Route path="participantes" element={<Participantes />} />
             <Route path="documentos" element={<Documentos />} />
+            <Route path="audios" element={<Audios />} />
             <Route path="exportar" element={<Exportar />} />
           </Route>
         </Route>
