@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useEstudo } from "./EstudoLayout";
 import { AlternadorModo } from "../../components/painel/AlternadorModo";
+import { CabecalhoTela } from "../../components/painel/CabecalhoTela";
 import {
   CONJUNTOS,
   baixarArquivo,
@@ -42,19 +43,18 @@ export function Exportar() {
 
   return (
     <div>
-      <div className="tela-titulo">
-        <span className="eyebrow">{estudo?.nome}</span>
-        <h1>Exportar</h1>
-        <hr className="regua" />
-      </div>
-      <p className="documento__versao">
-        Dados anonimizados, identificados só pelo <code>participant_id</code>
-        (pseudônimo) — sem e-mail ou nome. Codificação UTF-8, separador vírgula.
-      </p>
-
-      <div style={{ margin: "var(--espaco-4) 0" }}>
-        <AlternadorModo incluirPiloto={incluirPiloto} onChange={setIncluirPiloto} />
-      </div>
+      <CabecalhoTela
+        sobretitulo={estudo?.nome ?? "Estudo"}
+        titulo="Exportar"
+        acoes={
+          <AlternadorModo incluirPiloto={incluirPiloto} onChange={setIncluirPiloto} />
+        }
+      >
+        <p>
+          Dados anonimizados, identificados só pelo <code>participant_id</code>{" "}
+          (pseudônimo) — sem e-mail ou nome. Codificação UTF-8, separador vírgula.
+        </p>
+      </CabecalhoTela>
 
       {carregando && <p role="status">Carregando dados…</p>}
       {erro && <p className="erro-caixa">{erro}</p>}
@@ -65,8 +65,8 @@ export function Exportar() {
             {CONJUNTOS.map((c) => {
               const linhas = dados[c];
               return (
-                <div key={c} className="cartao">
-                  <div className="lista-docs__cabeca">
+                <section key={c} className="cartao-painel">
+                  <div className="cartao-painel__corpo lista-docs__cabeca">
                     <div>
                       <strong>{ROTULO[c]}</strong>
                       <span className="documento__versao">
@@ -88,7 +88,7 @@ export function Exportar() {
                       Baixar CSV
                     </button>
                   </div>
-                </div>
+                </section>
               );
             })}
           </div>

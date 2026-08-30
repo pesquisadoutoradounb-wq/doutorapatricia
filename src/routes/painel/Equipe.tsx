@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { CabecalhoTela } from "../../components/painel/CabecalhoTela";
+import { TabelaCartao } from "../../components/painel/TabelaCartao";
+import { Selo } from "../../components/painel/Selo";
 
 interface Membro {
   user_id: string;
@@ -21,33 +24,44 @@ export function Equipe() {
 
   return (
     <div>
-      <div className="tela-titulo">
-        <span className="eyebrow">Plataforma</span>
-        <h1>Equipe</h1>
-        <hr className="regua" />
-      </div>
+      <CabecalhoTela sobretitulo="Plataforma" titulo="Equipe" />
 
       {membros === null ? (
         <p role="status">Carregando…</p>
       ) : (
-        <table className="tabela">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Papel</th>
-              <th>Desde</th>
-            </tr>
-          </thead>
-          <tbody>
-            {membros.map((m) => (
-              <tr key={m.user_id}>
-                <td>{m.nome ?? "—"}</td>
-                <td>{m.papel}</td>
-                <td>{new Date(m.criado_em).toLocaleDateString("pt-BR")}</td>
+        <TabelaCartao titulo="Membros" contagem={membros.length}>
+          <table className="tabela">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Papel</th>
+                <th className="num">Desde</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {membros.map((m) => (
+                <tr key={m.user_id}>
+                  <td>{m.nome ?? "—"}</td>
+                  <td>
+                    <Selo tom={m.papel === "admin" ? "info" : "neutro"}>
+                      {m.papel}
+                    </Selo>
+                  </td>
+                  <td className="num">
+                    {new Date(m.criado_em).toLocaleDateString("pt-BR")}
+                  </td>
+                </tr>
+              ))}
+              {membros.length === 0 && (
+                <tr>
+                  <td className="tabela__vazio" colSpan={3}>
+                    Nenhum membro cadastrado.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </TabelaCartao>
       )}
 
       <div className="aviso" style={{ marginTop: "var(--espaco-6)" }}>

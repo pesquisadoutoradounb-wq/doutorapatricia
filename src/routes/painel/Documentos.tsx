@@ -7,6 +7,8 @@ import {
   type DocAdmin,
 } from "../../lib/documentosAdmin";
 import type { SlugDocumento } from "../../lib/documentos";
+import { CabecalhoTela } from "../../components/painel/CabecalhoTela";
+import { Selo } from "../../components/painel/Selo";
 
 /**
  * Editor mínimo dos textos do estudo. O texto real fica só no banco (pré-CEP).
@@ -25,11 +27,7 @@ export function Documentos() {
 
   return (
     <div>
-      <div className="tela-titulo">
-        <span className="eyebrow">{estudo.nome}</span>
-        <h1>Documentos</h1>
-        <hr className="regua" />
-      </div>
+      <CabecalhoTela sobretitulo={estudo.nome} titulo="Documentos" />
 
       <div className="lista-docs">
         {SLUGS_DOCUMENTO.map(({ slug, rotulo, nota }) => {
@@ -43,36 +41,38 @@ export function Documentos() {
               ativo: true,
             };
           return (
-            <div key={slug} className="cartao">
-              <div className="lista-docs__cabeca">
-                <div>
-                  <strong>{rotulo}</strong>
-                  <span className="documento__versao">
-                    {docs[slug]
-                      ? `versão ${atual.versao} · publicado`
-                      : "não cadastrado"}
-                  </span>
+            <section key={slug} className="cartao-painel">
+              <div className="cartao-painel__corpo">
+                <div className="lista-docs__cabeca">
+                  <div>
+                    <strong>{rotulo}</strong>
+                    <span className="lista-cartoes__meta">
+                      <Selo tom={docs[slug] ? "sucesso" : "neutro"}>
+                        {docs[slug] ? `versão ${atual.versao} · publicado` : "não cadastrado"}
+                      </Selo>
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="botao botao--secundario"
+                    onClick={() => setAberto(aberto === slug ? null : slug)}
+                  >
+                    {aberto === slug ? "Fechar" : "Editar"}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="botao botao--secundario"
-                  onClick={() => setAberto(aberto === slug ? null : slug)}
-                >
-                  {aberto === slug ? "Fechar" : "Editar"}
-                </button>
+                {nota && <p className="documento__versao">{nota}</p>}
+                {aberto === slug && (
+                  <EditorDoc
+                    studyId={estudo.id}
+                    inicial={atual}
+                    aoSalvar={async () => {
+                      setDocs(await carregarDocsDoEstudo(estudo.id));
+                      setAberto(null);
+                    }}
+                  />
+                )}
               </div>
-              {nota && <p className="documento__versao">{nota}</p>}
-              {aberto === slug && (
-                <EditorDoc
-                  studyId={estudo.id}
-                  inicial={atual}
-                  aoSalvar={async () => {
-                    setDocs(await carregarDocsDoEstudo(estudo.id));
-                    setAberto(null);
-                  }}
-                />
-              )}
-            </div>
+            </section>
           );
         })}
       </div>

@@ -7,6 +7,8 @@ import {
   type AudioAtual,
   type VinhetaAdmin,
 } from "../../lib/audiosAdmin";
+import { CabecalhoTela } from "../../components/painel/CabecalhoTela";
+import { Selo } from "../../components/painel/Selo";
 
 /**
  * Upload de 1 áudio de imaginação guiada por vinheta (Storage `audios` +
@@ -33,15 +35,12 @@ export function Audios() {
 
   return (
     <div>
-      <div className="tela-titulo">
-        <span className="eyebrow">{estudo.nome}</span>
-        <h1>Áudios das vinhetas</h1>
-        <hr className="regua" />
-      </div>
-      <p className="documento__versao">
-        Um arquivo por vinheta. Sugerido: MP3, mono, ~128 kbps, curto
-        (&lt; ~3 min / &lt; 5 MB). Substituir reenvia o mesmo caminho.
-      </p>
+      <CabecalhoTela sobretitulo={estudo.nome} titulo="Áudios das vinhetas">
+        <p>
+          Um arquivo por vinheta. Sugerido: MP3, mono, ~128 kbps, curto
+          (&lt; ~3 min / &lt; 5 MB). Substituir reenvia o mesmo caminho.
+        </p>
+      </CabecalhoTela>
 
       <div className="lista-docs">
         {vinhetas.map((v) => (
@@ -73,17 +72,20 @@ function LinhaAudio({
   const [erro, setErro] = useState<string | null>(null);
 
   return (
-    <div className="cartao">
+    <section className="cartao-painel">
+      <div className="cartao-painel__corpo">
       <div className="lista-docs__cabeca">
         <div>
           <strong>
             Vinheta {vinheta.id} — {vinheta.titulo_interno}
           </strong>
-          <span className="documento__versao">
-            Domínio {vinheta.dominio} ·{" "}
-            {atual
-              ? `áudio enviado${atual.duracao_segundos ? ` (${Math.round(atual.duracao_segundos)}s)` : ""}`
-              : "sem áudio"}
+          <span className="lista-cartoes__meta">
+            <span>Domínio {vinheta.dominio}</span>
+            <Selo tom={atual ? "sucesso" : "neutro"}>
+              {atual
+                ? `áudio enviado${atual.duracao_segundos ? ` · ${Math.round(atual.duracao_segundos)}s` : ""}`
+                : "sem áudio"}
+            </Selo>
           </span>
         </div>
       </div>
@@ -115,6 +117,7 @@ function LinhaAudio({
       </label>
       {enviando && <p role="status">Enviando…</p>}
       {erro && <p className="erro-caixa">{erro}</p>}
-    </div>
+      </div>
+    </section>
   );
 }

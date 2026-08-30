@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useEstudo } from "./EstudoLayout";
 import { AlternadorModo } from "../../components/painel/AlternadorModo";
+import { CabecalhoTela } from "../../components/painel/CabecalhoTela";
+import { TabelaCartao } from "../../components/painel/TabelaCartao";
+import { Selo, type TomSelo } from "../../components/painel/Selo";
 import { parseCsvConvites } from "../../lib/csvConvites";
 import {
   criarConvites,
@@ -21,6 +24,16 @@ const ROTULO_STATUS: Record<string, string> = {
   expirado: "Expirado",
   inelegivel: "Inelegível",
   interrompido: "Interrompeu",
+};
+
+const TOM_STATUS: Record<string, TomSelo> = {
+  enviado: "info",
+  aberto: "info",
+  iniciado: "info",
+  concluido: "sucesso",
+  expirado: "neutro",
+  inelegivel: "erro",
+  interrompido: "aviso",
 };
 
 function data(s: string | null): string {
@@ -49,8 +62,6 @@ export function Convites() {
 
   const parsed = useMemo(() => parseCsvConvites(texto), [texto]);
 
-  if (!estudo || convites === null) return <p role="status">Carregando…</p>;
-
   async function enviar() {
     if (!estudo || parsed.linhas.length === 0) return;
     setErro(null);
@@ -66,172 +77,212 @@ export function Convites() {
 
   return (
     <div>
-      <div className="tela-titulo">
-        <span className="eyebrow">{estudo.nome}</span>
-        <h1>Convites</h1>
-        <hr className="regua" />
-      </div>
+      <CabecalhoTela sobretitulo={estudo?.nome ?? "Estudo"} titulo="Convites" />
 
-      <div className="cartao">
-        <h2>Adicionar convites</h2>
-        <p className="documento__versao">
-          Um e-mail por linha, ou <code>email, nome</code> / <code>email; nome</code>.
-          Cabeçalho é ignorado.
-        </p>
-        <textarea
-          rows={6}
-          value={texto}
-          placeholder={"maria@exemplo.com, Maria\njoao@exemplo.com"}
-          onChange={(e) => setTexto(e.target.value)}
-        />
-        <label className="campo" style={{ marginTop: "var(--espaco-3)" }}>
-          <span className="campo__rotulo">Ou importe um arquivo .csv</span>
-          <input
-            type="file"
-            accept=".csv,text/csv"
-            onChange={async (e) => {
-              const f = e.target.files?.[0];
-              if (f) setTexto(await f.text());
-              e.target.value = "";
-            }}
-          />
-        </label>
-
-        {texto.trim() && (
-          <p className="documento__versao">
-            {parsed.linhas.length} e-mail(s) válido(s)
-            {parsed.erros.length > 0 && `, ${parsed.erros.length} com problema`}.
-          </p>
-        )}
-        {parsed.erros.length > 0 && (
-          <ul className="erro-caixa">
-            {parsed.erros.slice(0, 8).map((e) => (
-              <li key={e.linha}>Linha {e.linha}: {e.motivo}</li>
-            ))}
-          </ul>
-        )}
-
-        {erro && <p className="erro-caixa">{erro}</p>}
-        {resultado && (
-          <p className="sucesso-caixa">
-            {resultado.criados} criado(s), {resultado.enviados} enviado(s).
-            {resultado.erros.length > 0 &&
-              ` Falhas: ${resultado.erros.map((x) => x.email).join(", ")}.`}
-          </p>
-        )}
-
-        <button
-          type="button"
-          className="botao"
-          disabled={enviando || parsed.linhas.length === 0}
-          onClick={enviar}
-        >
-          {enviando ? "Enviando…" : `Enviar ${parsed.linhas.length || ""} convite(s)`}
-        </button>
-      </div>
-
-      <div className="cartao" style={{ marginTop: "var(--espaco-4)" }}>
-        <h2>Link de teste (piloto)</h2>
-        <p className="documento__versao">
-          Gera um convite piloto para testar o fluxo do participante. Não envia
-          e-mail e não entra nas métricas de produção.
-        </p>
-        <button
-          type="button"
-          className="botao botao--secundario"
-          onClick={async () => {
-            if (!estudo) return;
-            const r = await gerarLinkTeste(estudo.id);
-            if (r.ok) {
-              setLinkTeste(r.link);
-              recarregar(estudo.id);
-            } else setErro(r.motivo);
-          }}
-        >
-          Gerar link de teste
-        </button>
-        {linkTeste && (
-          <p className="sucesso-caixa" style={{ wordBreak: "break-all" }}>
-            {linkTeste}
-          </p>
-        )}
-      </div>
-
-      <div style={{ margin: "var(--espaco-6) 0 var(--espaco-3)" }}>
-        <AlternadorModo incluirPiloto={incluirPiloto} onChange={setIncluirPiloto} />
-      </div>
-
-      <table className="tabela">
-        <thead>
-          <tr>
-            <th>E-mail</th>
-            <th>Nome</th>
-            <th>Modo</th>
-            <th>Status</th>
-            <th>Enviado</th>
-            <th>Expira</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {convites.map((c) => (
-            <tr key={c.id}>
-              <td>{c.email}</td>
-              <td>{c.nome ?? "—"}</td>
-              <td>{c.modo === "piloto" ? "piloto" : "produção"}</td>
-              <td>
-                {ROTULO_STATUS[c.status] ?? c.status}
-                {!c.enviado_em && c.modo === "producao" && " (não enviado)"}
-              </td>
-              <td>{data(c.enviado_em)}</td>
-              <td>{data(c.expira_em)}</td>
-              <td className="tabela__acoes">
-                <button
-                  type="button"
-                  className="link-acao"
-                  onClick={() =>
-                    navigator.clipboard?.writeText(linkDoConvite(c.token))
-                  }
-                >
-                  copiar link
-                </button>
-                {c.modo === "producao" && (
-                  <button
-                    type="button"
-                    className="link-acao"
-                    disabled={ocupadoId === c.id}
-                    onClick={async () => {
-                      setOcupadoId(c.id);
-                      const r = await reenviarConvite(c.id);
-                      setOcupadoId(null);
-                      if (!r.ok) setErro(r.motivo);
-                      else if (estudo) recarregar(estudo.id);
+      {!estudo || convites === null ? (
+        <p role="status">Carregando…</p>
+      ) : (
+        <>
+          <div className="grade-cartoes">
+            <section className="cartao-painel">
+              <div className="cartao-painel__cabeca">
+                <h2>Adicionar convites</h2>
+              </div>
+              <div className="cartao-painel__corpo">
+                <p className="documento__versao">
+                  Um e-mail por linha, ou <code>email, nome</code> /{" "}
+                  <code>email; nome</code>. Cabeçalho é ignorado.
+                </p>
+                <textarea
+                  rows={6}
+                  value={texto}
+                  placeholder={"maria@exemplo.com, Maria\njoao@exemplo.com"}
+                  onChange={(e) => setTexto(e.target.value)}
+                />
+                <label className="campo" style={{ marginTop: "var(--espaco-3)" }}>
+                  <span className="campo__rotulo">Ou importe um arquivo .csv</span>
+                  <input
+                    type="file"
+                    accept=".csv,text/csv"
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      if (f) setTexto(await f.text());
+                      e.target.value = "";
                     }}
-                  >
-                    reenviar
-                  </button>
+                  />
+                </label>
+
+                {texto.trim() && (
+                  <p className="documento__versao">
+                    {parsed.linhas.length} e-mail(s) válido(s)
+                    {parsed.erros.length > 0 &&
+                      `, ${parsed.erros.length} com problema`}
+                    .
+                  </p>
                 )}
+                {parsed.erros.length > 0 && (
+                  <ul className="erro-caixa">
+                    {parsed.erros.slice(0, 8).map((e) => (
+                      <li key={e.linha}>
+                        Linha {e.linha}: {e.motivo}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {erro && <p className="erro-caixa">{erro}</p>}
+                {resultado && (
+                  <p className="sucesso-caixa">
+                    {resultado.criados} criado(s), {resultado.enviados} enviado(s).
+                    {resultado.erros.length > 0 &&
+                      ` Falhas: ${resultado.erros.map((x) => x.email).join(", ")}.`}
+                  </p>
+                )}
+
                 <button
                   type="button"
-                  className="link-acao link-acao--perigo"
+                  className="botao"
+                  disabled={enviando || parsed.linhas.length === 0}
+                  onClick={enviar}
+                >
+                  {enviando
+                    ? "Enviando…"
+                    : `Enviar ${parsed.linhas.length || ""} convite(s)`}
+                </button>
+              </div>
+            </section>
+
+            <section className="cartao-painel">
+              <div className="cartao-painel__cabeca">
+                <h2>Link de teste (piloto)</h2>
+              </div>
+              <div className="cartao-painel__corpo">
+                <p className="documento__versao">
+                  Gera um convite piloto para testar o fluxo do participante. Não
+                  envia e-mail e não entra nas métricas de produção.
+                </p>
+                <button
+                  type="button"
+                  className="botao botao--secundario"
                   onClick={async () => {
-                    if (!confirm("Excluir este convite?")) return;
-                    await excluirConvite(c.id);
-                    if (estudo) recarregar(estudo.id);
+                    if (!estudo) return;
+                    const r = await gerarLinkTeste(estudo.id);
+                    if (r.ok) {
+                      setLinkTeste(r.link);
+                      recarregar(estudo.id);
+                    } else setErro(r.motivo);
                   }}
                 >
-                  excluir
+                  Gerar link de teste
                 </button>
-              </td>
-            </tr>
-          ))}
-          {convites.length === 0 && (
-            <tr>
-              <td colSpan={7}>Nenhum convite ainda.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                {linkTeste && (
+                  <p className="sucesso-caixa" style={{ wordBreak: "break-all" }}>
+                    {linkTeste}
+                  </p>
+                )}
+              </div>
+            </section>
+          </div>
+
+          <TabelaCartao
+            titulo="Convites"
+            contagem={convites.length}
+            acoes={
+              <AlternadorModo
+                incluirPiloto={incluirPiloto}
+                onChange={setIncluirPiloto}
+              />
+            }
+          >
+            <table className="tabela">
+              <thead>
+                <tr>
+                  <th>E-mail</th>
+                  <th>Nome</th>
+                  <th>Modo</th>
+                  <th>Status</th>
+                  <th className="num">Enviado</th>
+                  <th className="num">Expira</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {convites.map((c) => (
+                  <tr key={c.id}>
+                    <td>{c.email}</td>
+                    <td>{c.nome ?? "—"}</td>
+                    <td>
+                      <Selo tom={c.modo === "piloto" ? "aviso" : "neutro"}>
+                        {c.modo === "piloto" ? "piloto" : "produção"}
+                      </Selo>
+                    </td>
+                    <td>
+                      <Selo tom={TOM_STATUS[c.status] ?? "neutro"}>
+                        {ROTULO_STATUS[c.status] ?? c.status}
+                      </Selo>
+                      {!c.enviado_em && c.modo === "producao" && (
+                        <>
+                          {" "}
+                          <Selo tom="aviso" ponto={false}>
+                            não enviado
+                          </Selo>
+                        </>
+                      )}
+                    </td>
+                    <td className="num">{data(c.enviado_em)}</td>
+                    <td className="num">{data(c.expira_em)}</td>
+                    <td className="tabela__acoes">
+                      <button
+                        type="button"
+                        className="link-acao"
+                        onClick={() =>
+                          navigator.clipboard?.writeText(linkDoConvite(c.token))
+                        }
+                      >
+                        copiar link
+                      </button>
+                      {c.modo === "producao" && (
+                        <button
+                          type="button"
+                          className="link-acao"
+                          disabled={ocupadoId === c.id}
+                          onClick={async () => {
+                            setOcupadoId(c.id);
+                            const r = await reenviarConvite(c.id);
+                            setOcupadoId(null);
+                            if (!r.ok) setErro(r.motivo);
+                            else if (estudo) recarregar(estudo.id);
+                          }}
+                        >
+                          reenviar
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="link-acao link-acao--perigo"
+                        onClick={async () => {
+                          if (!confirm("Excluir este convite?")) return;
+                          await excluirConvite(c.id);
+                          if (estudo) recarregar(estudo.id);
+                        }}
+                      >
+                        excluir
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {convites.length === 0 && (
+                  <tr>
+                    <td className="tabela__vazio" colSpan={7}>
+                      Nenhum convite ainda.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </TabelaCartao>
+        </>
+      )}
     </div>
   );
 }

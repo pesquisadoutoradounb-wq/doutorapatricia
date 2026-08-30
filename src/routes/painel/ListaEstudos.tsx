@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { listarEstudos, type Estudo } from "../../lib/estudos";
+import { CabecalhoTela } from "../../components/painel/CabecalhoTela";
+import { Selo } from "../../components/painel/Selo";
 
 export function ListaEstudos() {
   const [estudos, setEstudos] = useState<Estudo[] | null>(null);
@@ -11,22 +13,25 @@ export function ListaEstudos() {
 
   return (
     <div>
-      <div className="tela-titulo">
-        <span className="eyebrow">Plataforma</span>
-        <h1>Estudos</h1>
-        <hr className="regua" />
-      </div>
+      <CabecalhoTela sobretitulo="Plataforma" titulo="Estudos" />
 
       {estudos === null ? (
         <p role="status">Carregando…</p>
       ) : (
         <div className="lista-cartoes">
           {estudos.map((e) => (
-            <Link key={e.id} to={`/painel/estudos/${e.id}`} className="cartao cartao--link">
+            <Link
+              key={e.id}
+              to={`/painel/estudos/${e.id}`}
+              className="cartao cartao--link cartao-painel--acento"
+            >
               <strong>{e.nome}</strong>
               {e.descricao && <p>{e.descricao}</p>}
-              <span className="documento__versao">
-                {e.ativo ? "ativo" : "inativo"} · {e.slug}
+              <span className="lista-cartoes__meta">
+                <Selo tom={e.ativo ? "sucesso" : "neutro"}>
+                  {e.ativo ? "ativo" : "inativo"}
+                </Selo>
+                <code>{e.slug}</code>
               </span>
             </Link>
           ))}

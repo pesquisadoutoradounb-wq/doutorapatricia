@@ -3,16 +3,7 @@ import { useEstudo } from "./EstudoLayout";
 import { carregarMetricas, type MetricasEstudo } from "../../lib/painelMetricas";
 import { CartaoKPI, BarrasH, Funil, LinhaTempo } from "../../components/painel/graficos";
 import { AlternadorModo } from "../../components/painel/AlternadorModo";
-
-function Titulo({ secao, nome }: { secao: string; nome?: string }) {
-  return (
-    <div className="tela-titulo">
-      <span className="eyebrow">{nome ?? "Estudo"}</span>
-      <h1>{secao}</h1>
-      <hr className="regua" />
-    </div>
-  );
-}
+import { CabecalhoTela } from "../../components/painel/CabecalhoTela";
 
 function pct(n: number) {
   return `${Math.round(n * 100)}%`;
@@ -35,11 +26,13 @@ export function DashboardEstudo() {
 
   return (
     <div>
-      <Titulo secao="Painel" nome={estudo?.nome} />
-
-      <div style={{ margin: "0 0 var(--espaco-4)" }}>
-        <AlternadorModo incluirPiloto={incluirPiloto} onChange={setIncluirPiloto} />
-      </div>
+      <CabecalhoTela
+        sobretitulo={estudo?.nome ?? "Estudo"}
+        titulo="Painel"
+        acoes={
+          <AlternadorModo incluirPiloto={incluirPiloto} onChange={setIncluirPiloto} />
+        }
+      />
 
       {erro && <p className="erro-caixa">Não foi possível carregar os indicadores.</p>}
       {!m && !erro && <p role="status">Carregando indicadores…</p>}
@@ -80,4 +73,3 @@ export function DashboardEstudo() {
     </div>
   );
 }
-

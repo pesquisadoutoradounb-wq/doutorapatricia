@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useEstudo } from "./EstudoLayout";
 import { AlternadorModo } from "../../components/painel/AlternadorModo";
+import { CabecalhoTela } from "../../components/painel/CabecalhoTela";
+import { TabelaCartao } from "../../components/painel/TabelaCartao";
 import { CartaoKPI, BarrasH } from "../../components/painel/graficos";
 import { supabase } from "../../lib/supabase";
 import {
@@ -96,20 +98,19 @@ export function Resultados() {
 
   return (
     <div>
-      <div className="tela-titulo">
-        <span className="eyebrow">{estudo?.nome}</span>
-        <h1>Resultados</h1>
-        <hr className="regua" />
-      </div>
-      <p className="documento__versao">
-        Médias entre participantes. Escores por participante estão na aba
-        Exportar. Pontos de corte do YSQ e faixas do PANAS ainda pendentes da
-        pesquisadora.
-      </p>
-
-      <div style={{ margin: "var(--espaco-4) 0" }}>
-        <AlternadorModo incluirPiloto={incluirPiloto} onChange={setIncluirPiloto} />
-      </div>
+      <CabecalhoTela
+        sobretitulo={estudo?.nome ?? "Estudo"}
+        titulo="Resultados"
+        acoes={
+          <AlternadorModo incluirPiloto={incluirPiloto} onChange={setIncluirPiloto} />
+        }
+      >
+        <p>
+          Médias entre participantes. Escores por participante estão na aba
+          Exportar. Pontos de corte do YSQ e faixas do PANAS ainda pendentes da
+          pesquisadora.
+        </p>
+      </CabecalhoTela>
 
       {erro && <p className="erro-caixa">Não foi possível carregar os resultados.</p>}
       {!erro && (!ysq || !panas) && <p role="status">Calculando…</p>}
@@ -123,19 +124,24 @@ export function Resultados() {
               <div className="dash-grade">
                 <BarrasH titulo="Média por domínio (1–6)" dados={ysqAgg.dominios} />
               </div>
-              <table className="tabela" style={{ marginTop: "var(--espaco-4)" }}>
-                <thead>
-                  <tr><th>Esquema</th><th>Média do grupo</th></tr>
-                </thead>
-                <tbody>
-                  {ysqAgg.esquemas.map((s) => (
-                    <tr key={s.nome}>
-                      <td>{s.nome}</td>
-                      <td>{s.mediaGrupo?.toFixed(2) ?? "—"}</td>
+              <TabelaCartao titulo="Esquemas — média do grupo" contagem={ysqAgg.esquemas.length}>
+                <table className="tabela">
+                  <thead>
+                    <tr>
+                      <th>Esquema</th>
+                      <th className="num">Média do grupo</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {ysqAgg.esquemas.map((s) => (
+                      <tr key={s.nome}>
+                        <td>{s.nome}</td>
+                        <td className="num">{s.mediaGrupo?.toFixed(2) ?? "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </TabelaCartao>
             </>
           ) : (
             <p className="aviso">Ainda sem respostas do YSQ-S3.</p>
