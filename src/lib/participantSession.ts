@@ -21,9 +21,25 @@ export const ETAPAS = [
 
 export type Etapa = (typeof ETAPAS)[number];
 
+/**
+ * Estados terminais fora da sequência feliz. Uma vez aqui, o participante não
+ * avança mais e o link de convite não retoma (mensagem de encerramento).
+ *  - `inelegivel`: reprovado nos critérios do sociodemográfico (idade / seção C).
+ *  - `interrompido`: pediu para cancelar a participação no modal de abandono.
+ */
+export const ETAPAS_TERMINAIS = ["inelegivel", "interrompido"] as const;
+
+export type EtapaTerminal = (typeof ETAPAS_TERMINAIS)[number];
+
+export type EtapaParticipante = Etapa | EtapaTerminal;
+
+export function ehEtapaTerminal(etapa: string): etapa is EtapaTerminal {
+  return (ETAPAS_TERMINAIS as readonly string[]).includes(etapa);
+}
+
 export interface SessaoParticipante {
   participantId: string;
-  etapaAtual: Etapa;
+  etapaAtual: EtapaParticipante;
   modo: "piloto" | "producao";
   studyId: string;
   studySlug: string | null;
@@ -42,7 +58,7 @@ export type ResultadoEntrada =
 
 interface RespostaIniciar {
   participant_id: string;
-  etapa_atual: Etapa;
+  etapa_atual: EtapaParticipante;
   modo: "piloto" | "producao";
   study_id: string;
   study_slug: string | null;
@@ -58,7 +74,7 @@ export async function entrarComToken(token: string): Promise<ResultadoEntrada> {
     );
     if (error) {
       const status = (error as { context?: { status?: number } }).context?.status;
-      if (status === 404) return { ok: false, motivo: "token_invalido" };
+      if (status === 400 || status === 404) return { ok: false, motivo: "token_invalido" };
       if (status === 410) return { ok: false, motivo: "token_expirado" };
       if (status === 409) return { ok: false, motivo: "ja_concluido" };
       return { ok: false, motivo: "erro_rede" };
@@ -109,7 +125,7 @@ export async function entrarComToken(token: string): Promise<ResultadoEntrada> {
 }
 
 /** Caminho da rota para uma etapa (dentro de /participar). */
-export function rotaDaEtapa(etapa: Etapa): string {
+export function rotaDaEtapa(etapa: EtapaParticipante): string {
   switch (etapa) {
     case "informacoes":
       return "/participar/informacoes";
@@ -118,6 +134,10 @@ export function rotaDaEtapa(etapa: Etapa): string {
     case "encerramento":
     case "concluido":
       return "/participar/encerramento";
+    case "inelegivel":
+      return "/participar/inelegivel";
+    case "interrompido":
+      return "/participar/interrompido";
     default:
       return `/participar/etapa/${etapa}`;
   }
@@ -131,6 +151,21 @@ export async function avancarEtapa(participantId: string, novaEtapa: Etapa) {
   return supabase
     .from("participants")
     .update({ etapa_atual: novaEtapa })
+    .eq("id", participantId);
+}
+
+/**
+ * Encerra a participação num estado terminal (`inelegivel` ou `interrompido`).
+ * O trigger `validar_avanco_etapa` aceita a transição do sociodemográfico para
+ * `inelegivel` e de qualquer etapa não-terminal para `interrompido`.
+ */
+export async function encerrarParticipacao(
+  participantId: string,
+  etapa: EtapaTerminal,
+) {
+  return supabase
+    .from("participants")
+    .update({ etapa_atual: etapa })
     .eq("id", participantId);
 }
 

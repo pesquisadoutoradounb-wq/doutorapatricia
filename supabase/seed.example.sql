@@ -24,7 +24,13 @@ insert into public.study_documents (slug, versao, titulo, corpo_html, ativo) val
   ('encerramento', 'placeholder-0', 'Encerramento',
    '<p><strong>PLACEHOLDER.</strong> Cadastrar conforme "Encerramento do procedimento experimental".</p>', true),
   ('desconforto', 'placeholder-0', 'Desconforto durante a pesquisa',
-   '<p><strong>PLACEHOLDER.</strong> Cadastrar orientações éticas + contatos do TCLE (PERGUNTAR 22).</p>', true)
+   '<p><strong>PLACEHOLDER.</strong> Cadastrar orientações éticas + contatos do TCLE (PERGUNTAR 22).</p>', true),
+  ('ysq_instrucoes', 'placeholder-0', 'Instruções — Questionário de Esquemas (YSQ-S3)',
+   '<p><strong>PLACEHOLDER.</strong> Texto de instrução do YSQ-S3 (some se não cadastrado; a escala já basta).</p>', true),
+  ('panas_instrucoes', 'placeholder-0', 'Instruções — Escala de Afetos (PANAS)',
+   '<p><strong>PLACEHOLDER.</strong> Instrução da PANAS reescrita para "neste momento" (PERGUNTAR 11).</p>', true),
+  ('inelegibilidade', 'placeholder-0', 'Agradecemos seu interesse',
+   '<p><strong>PLACEHOLDER.</strong> Mensagem de encerramento por inelegibilidade fornecida pela pesquisadora (PERGUNTAR 7).</p>', true)
 on conflict (slug, versao) do nothing;
 
 -- ---------------------------------------------------------------------------

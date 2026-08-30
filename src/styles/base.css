@@ -1069,3 +1069,240 @@ textarea:focus-visible {
     grid-template-columns: 6.5rem 1fr 1.8rem;
   }
 }
+
+/* =========================================================================
+   Instrumentos basais (sub-projeto C) — sociodemográfico, YSQ-S3, PANAS
+   ========================================================================= */
+
+.botao--perigo {
+  background: transparent;
+  color: var(--erro);
+  box-shadow: inset 0 0 0 1px var(--erro);
+}
+.botao--perigo:hover:not(:disabled) {
+  filter: none;
+  background: var(--erro-fundo);
+}
+
+/* ---------- Instrução no topo do instrumento ---------- */
+.instrucao-instrumento {
+  font-size: 0.95rem;
+  color: var(--tinta-suave);
+  margin-bottom: var(--espaco-6);
+}
+.instrucao-instrumento :where(p, ul, ol) {
+  margin: 0 0 var(--espaco-3);
+}
+
+/* ---------- Sociodemográfico ---------- */
+.socio-introducao {
+  font-size: 0.95rem;
+  color: var(--tinta-suave);
+  margin-bottom: var(--espaco-8);
+}
+.socio-secao {
+  margin-bottom: var(--espaco-8);
+}
+.socio-secao h2 {
+  font-size: 1.05rem;
+  padding-bottom: var(--espaco-2);
+  border-bottom: 2px solid var(--dourado);
+  margin-bottom: var(--espaco-6);
+}
+.socio-campo {
+  padding: var(--espaco-4);
+  border-radius: var(--raio);
+  border: 1px solid transparent;
+  margin-bottom: var(--espaco-3);
+}
+.socio-campo--erro {
+  border-color: var(--erro);
+  background: var(--erro-fundo);
+}
+.socio-campo--branco {
+  border-color: var(--aviso-borda);
+  background: var(--aviso-fundo);
+}
+.socio-campo__rotulo {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--espaco-2);
+}
+.socio-campo__obrig {
+  color: var(--erro);
+}
+.socio-campo__ajuda {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--tinta-suave);
+  margin-bottom: var(--espaco-3);
+}
+.socio-campo input[type="text"],
+.socio-campo input[type="number"],
+.socio-campo select {
+  max-width: 22rem;
+}
+.socio-opcoes {
+  display: grid;
+  gap: var(--espaco-2);
+  margin-top: var(--espaco-2);
+}
+.socio-opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espaco-3);
+  padding: var(--espaco-2) var(--espaco-3);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  cursor: pointer;
+  font-weight: 400;
+}
+.socio-opcao:has(input:checked) {
+  border-color: var(--azul);
+  box-shadow: inset 0 0 0 1px var(--azul);
+}
+.socio-opcao input {
+  margin-top: 3px;
+  width: auto;
+  min-height: 0;
+  flex: none;
+}
+
+/* ---------- Escala Likert (YSQ / PANAS) ---------- */
+.legenda-escala {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 var(--espaco-6);
+  padding: var(--espaco-3) var(--espaco-4);
+  background: var(--azul-lavado);
+  border-radius: var(--raio);
+  font-size: 0.85rem;
+}
+.legenda-escala__item {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  gap: var(--espaco-2);
+}
+.legenda-escala dt {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--azul-forte);
+}
+.legenda-escala dd {
+  margin: 0;
+  color: var(--tinta-suave);
+}
+
+.lista-likert {
+  display: grid;
+  gap: var(--espaco-2);
+}
+.likert {
+  border: 1px solid transparent;
+  border-radius: var(--raio);
+  padding: var(--espaco-4);
+  margin: 0;
+}
+.likert--branco {
+  border-color: var(--aviso-borda);
+  background: var(--aviso-fundo);
+}
+.likert__enunciado {
+  display: block;
+  font-weight: 500;
+  margin-bottom: var(--espaco-3);
+}
+.likert__numero {
+  color: var(--tinta-suave);
+  font-variant-numeric: tabular-nums;
+}
+.likert__pontos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-2);
+}
+.likert__ponto {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  min-height: 46px;
+  padding: 0 var(--espaco-2);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+.likert__ponto:has(input:checked) {
+  border-color: var(--azul);
+  background: var(--azul);
+  color: var(--acao-texto);
+}
+.likert__ponto input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.likert__ponto:focus-within {
+  box-shadow: var(--anel-foco);
+}
+
+/* ---------- Progresso por bloco (YSQ) ---------- */
+.bloco-progresso {
+  margin-bottom: var(--espaco-6);
+}
+.bloco-progresso__rotulo {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--tinta-suave);
+  margin-bottom: var(--espaco-2);
+}
+.bloco-progresso__trilho {
+  display: block;
+  height: 6px;
+  background: var(--superficie-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bloco-progresso__barra {
+  display: block;
+  height: 100%;
+  background: var(--dourado);
+  transition: width var(--transicao);
+}
+
+/* ---------- Modal de abandono ---------- */
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 40, 58, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-4);
+  z-index: 100;
+}
+.modal-cartao {
+  background: var(--superficie);
+  border-radius: var(--raio-g);
+  box-shadow: var(--vidro-sombra);
+  padding: clamp(1.25rem, 1rem + 1.4vw, 1.9rem);
+  max-width: 30rem;
+  width: 100%;
+}
+.modal-cartao h2 {
+  margin-top: 0;
+}
+.modal-cartao__nota {
+  font-size: 0.9rem;
+  color: var(--tinta-suave);
+}
+.modal-cartao__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  margin-top: var(--espaco-6);
+}

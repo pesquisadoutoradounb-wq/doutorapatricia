@@ -20,16 +20,21 @@ Psicologia, Universidade de Brasília).
 
 Rotas, componentes e tabelas deixam a separação explícita: `/participar/*` × `/admin/*`.
 
-## Estado atual — sub-projeto A (fundação)
+## Estado atual
 
-Implementado: scaffold, roteamento com as duas árvores separadas, modelo de
-dados completo + RLS, modelo de sessão do participante (Anonymous Auth + claim),
-CI/CD, tokens de tema, página de desconforto + rodapé fixo, shell do painel.
+Implementado (A → C):
+- **A** Fundação: scaffold, roteamento com as duas árvores, modelo de dados +
+  RLS, sessão do participante (Anonymous Auth + claim), CI/CD, tokens de tema.
+- **A.2** Multi-estudo + casca ERP do painel (sidebar, seletor de estudo).
+- **B** Informações gerais + TCLE + consentimento (snapshot imutável) + via em
+  PDF + editor de documentos no painel. Dashboard gerencial.
+- **C** Coleta dos instrumentos basais: sociodemográfico (com elegibilidade),
+  YSQ-S3 (90 itens em blocos), PANAS, modal de abandono, estados terminais
+  `inelegivel` / `interrompido`. Sem auto-score (peça posterior).
 
-**Ainda não implementado** (próximos sub-projetos): conteúdo de todas as telas
-de instrumento, TCLE/consentimento/PDF, randomização e telas de vinheta/áudio,
-avaliação pós-imaginação, gestão de convites, dashboard, exportações, integração
-Brevo. Ver `docs/superpowers/specs/`.
+**Próximo**: sub-projeto D — instruções, randomização e telas de vinheta/áudio,
+avaliação pós-imaginação, encerramento, captura de tempos. Depois: gestão de
+convites, exportações, integração Brevo. Ver `docs/superpowers/specs/`.
 
 ---
 
@@ -146,7 +151,10 @@ supabase db push                   # remoto: aplica migrations pendentes ao proj
 
 Ordem atual: `0001` enums · `0002` tabelas · `0003` funções RLS · `0004`
 policies · `0005` views de participante · `0006` triggers · `0007` storage ·
-`0008` itens de instrumento (YSQ/PANAS/escalas + views).
+`0008` itens de instrumento (YSQ/PANAS/escalas + views) · `0009` multi-estudo ·
+`0010` estudo público + consentimento · `0011` estados terminais do participante
+(`inelegivel`/`interrompido`) + resultado de elegibilidade · `0012` transições
+para os estados terminais.
 
 O texto dos itens do YSQ-S3 e PANAS é conteúdo de instrumento: fica nas tabelas
 `ysq_items` / `panas_items` / `instrument_scale_points` (só admin) e é servido ao
@@ -226,8 +234,10 @@ Repositório → **Settings → Pages → Build and deployment → Source: GitHu
 
 ## Pendências de decisão (PERGUNTAR)
 
-Levantadas na leitura dos arquivos-fonte. **Nenhuma bloqueia o sub-projeto A**;
-as marcadas 🔴 bloqueiam B/C/D.
+Levantadas na leitura dos arquivos-fonte; respostas da pesquisadora em
+`Patricia/` (2026-08-29). ✅ = resolvida/implementada · 🔴 = ainda aberta.
+Nenhuma 🔴 restante bloqueia a **coleta** (sub-projeto C, entregue); as que
+sobram entram no sub-projeto D ou no auto-score.
 
 ### TCLE
 1. ✅ Placeholders do TCLE entram como `[COLCHETES]` literais; o administrador
@@ -237,53 +247,63 @@ as marcadas 🔴 bloqueiam B/C/D.
    (Salvar como PDF), sem enviar dados a terceiros.
 
 ### Sociodemográfico
-4. 🔴 Q8: corrigir "feração" → "federação"? Campo = lista de UFs ou texto livre?
-5. Q9: remover a meta-frase do autor ("Eu utilizaria faixas de renda…")? Salário
-   mínimo fixo no texto ou parametrizável?
-6. 🔴 Q1 (idade) e Q8 (UF) são obrigatórias (sem "Prefiro não responder" na
-   fonte)? "Não sei informar"/"Prefiro não responder" na Q14 são mutuamente
-   exclusivas das demais?
-7. 🔴 Seção C (Q15–Q18): "Não" a internet/áudio/português encerra com mensagem
-   de inelegibilidade ou só registra? Há idade mínima (18+)? Verificada onde?
-8. Confirmar que os campos abertos condicionais aparecem só quando a opção
-   correspondente é escolhida.
+4. ✅ Q8: "feração" → "federação"; campo = **lista das 27 UFs**; "Resido fora do
+   Brasil" libera campo "País".
+5. ✅ Q9: meta-frase do autor removida; salário mínimo **exibido no texto**
+   (constante `SALARIO_MINIMO_REFERENCIA`, hoje `R$ 1.621,00`).
+6. ✅ Q1 (idade) e Q8 (UF) **obrigatórias**. Q14: "Não sei informar" / "Prefiro
+   não responder" são exclusivas dos checkboxes de diagnóstico.
+7. ✅ Seção C: idade < 18 **ou** "Não" em Q15/Q17/Q18 → inelegível. Responde o
+   questionário inteiro; avaliação só no "Concluir"; tela terminal
+   `inelegivel` com a mensagem da pesquisadora. ("Não sei" em Q17 **não**
+   reprova — default, confirmar.)
+8. ✅ Campos condicionais aparecem só quando a opção-gatilho é marcada.
 
 ### YSQ-S3
-9. 🔴 Conferir os 90 itens extraídos (`docs/fonte-metodologia/_transcricao-para-conferencia.md`)
-   e confirmar escala 1–6 e rótulos.
-10. 🔴 Ordem = 1→90 da fonte? Todos obrigatórios para avançar?
+9. ✅ 90 itens em `docs/fonte-metodologia/` (não é pendência); conferência final
+   da transcrição automática ainda recomendada. Escala 1–6 e rótulos
+   confirmados.
+10. ✅ Ordem 1→90. Não se força resposta: mecanismo é o modal de abandono
+    (item 19); apresentado em 9 blocos de 10.
 
 ### PANAS
-11. 🔴 A instrução-fonte diz "período indicado pelo terapeuta" — incorreto aqui.
-    Qual período de referência ("neste momento"?) e como reescrever essa frase?
-12. Confirmar 19 itens na ordem extraída e escala 1–5.
+11. ✅ Instrução reescrita para referência **"neste momento"** (sem "terapeuta").
+12. ✅ 19 itens na ordem da transcrição, escala 1–5. Mapeamento item→subescala e
+    faixas de classificação **pendente** (só bloqueia o auto-score, não a coleta).
 
 ### Vinhetas e áudio
-13. 🔴 São 10 áudios distintos (um por vinheta) ou 1 áudio genérico reutilizado?
-    Já existem? Quem fornece? Formato/duração?
-14. Confirmar que o estímulo é só o parágrafo após "Imagine a seguinte situação:",
-    sem título/domínio, com a introdução "Leia atentamente a situação a seguir…".
-15. IDs 1–5 = Domínio 1; 6–10 = Domínio 2 (ordem do documento).
+13. ✅ 10 áudios distintos (um por vinheta). Roteiros prontos, **gravação
+    pendente** (pesquisadora). Formato a propor: MP3 mono, ~128 kbps, curto
+    (< ~3 min / < 5 MB).
+14. ✅ Estímulo = só o parágrafo, com introdução "Leia atentamente a situação a
+    seguir. Quando terminar, clique em 'Continuar'.". Tela: "Situação N" + texto
+    + Continuar → play do áudio. Textos limpos em `vinhetas para plataforma.docx`.
+15. ✅ IDs 1–5 = Domínio 1; 6–10 = Domínio 2 (só para análise). **Ordem das 10
+    vinhetas randomizada** por participante.
 
-### Avaliação pós-imaginação
-16. 🔴 Q7 "Não tenho certeza" — comportamento indefinido na fonte (só o desvio de
-    "Não" está especificado). Mostrar Q8–11, pular para Q12, ou subconjunto?
-17. 🔴 Q3 — matriz secundária de 8 emoções (0–10): entra no piloto ou fica de
-    fora (como a matriz da Q12)? Se Q2 = "Não percebi uma emoção específica", a
-    Q3 ainda aparece?
-18. Confirmar que a Q2 tem as duas partes (aberta + categórica de 10 opções).
-19. 🔴 Campos abertos (Q2a, Q6, Q11, Q12a) são obrigatórios para avançar, ou o
-    participante pode deixar em branco qualquer item? Vale para todas as telas.
-20. Granularidade da captura de tempos (proposta: timestamps de entrada/saída de
-    cada tela + evento de fim de áudio + posição do áudio ao avançar).
+### Avaliação pós-imaginação (entra em D — texto novo em `Patricia/avaliação pós imaginaçaõ plataforma.docx`)
+16. ✅ Q7 "Não" **ou** "Não tenho certeza" → pula para Q12. Q8–11 só se "Sim".
+17. ✅ Matriz secundária de 8 emoções (0–10) **entra**. "Não percebi uma emoção
+    específica" **removida** da Q2. Q3 "nenhuma intensidade" → pula para Q4.
+    Novo desvio: Q1 = "0 — Não consegui me imaginar" → pula para Q7.
+18. ✅ Q2 tem as duas partes (aberta + categórica), sem "Não percebi". Q12 voltou
+    como matriz completa (7 tendências + "Outra", 0–10) — `vignette_responses`
+    precisa de `q12_matriz`.
+19. ✅ Não se força resposta. Ao tentar avançar com 2+ respostas em branco na
+    tela/bloco, aparece o modal "Deseja interromper sua participação?" — Cancelar
+    volta às questões, "Sim" leva ao estado terminal `interrompido`. 1 em branco
+    = aviso inline. Vale para todas as telas de instrumento. (Implementado em C
+    para o sociodemográfico/YSQ/PANAS; a avaliação pós-imaginação herda em D.)
+20. 🔴 Granularidade da captura de tempos — a pesquisadora não entendeu a
+    proposta; explicar de forma simples e confirmar (entra em D).
 
 ### Páginas sem texto-fonte
 21. ✅ "Informações gerais do estudo" — usar o texto do Anexo 9 como sugestão
     editável no painel (Documentos → informações gerais). Cadastrar lá.
 22. ✅ "Desconforto durante a pesquisa" — mesmo conceito: sugestão editável no
     painel (Documentos → desconforto). Cadastrar lá.
-23. Corpo do e-mail de convite (Brevo) — há texto do Anexo 9, ou redigir
-    rascunho? (sem detalhar conteúdos dos esquemas — exigência do protocolo).
+23. ✅ Corpo do e-mail de convite (Brevo) — redigir rascunho para revisão (sem
+    detalhar conteúdos dos esquemas). Detalhes por áudio com a pesquisadora.
 
 ### Identidade
 25. 🔴 Identidade visual: UnB, "Vivant Psicologia" (consultório), ou neutra do

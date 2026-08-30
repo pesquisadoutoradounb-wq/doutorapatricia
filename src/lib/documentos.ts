@@ -13,7 +13,10 @@ export type SlugDocumento =
   | "tcle"
   | "instrucoes_gerais"
   | "encerramento"
-  | "desconforto";
+  | "desconforto"
+  | "ysq_instrucoes"
+  | "panas_instrucoes"
+  | "inelegibilidade";
 
 export interface DocumentoEstudo {
   slug: SlugDocumento;

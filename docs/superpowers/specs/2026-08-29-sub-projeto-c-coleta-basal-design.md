@@ -56,6 +56,18 @@ As dúvidas de conteúdo foram respondidas pela pesquisadora (pasta `Patricia/`,
 | — | layout YSQ | 9 blocos de ~10 itens com barra de progresso. |
 | — | texto sociodem. | Fica no código (schema tipado), não no banco. |
 
+### Ponto de atenção (decisão do Herbert, 2026-08-29)
+
+O texto do Sociodemográfico passa a viver no bundle público
+(`src/lib/instrumentos/sociodemografico.ts`), diferente da regra geral
+"textos de instrumento só no Supabase". Justificativa: é conteúdo da própria
+pesquisadora, sem direitos autorais de terceiros e com baixo risco de efeito de
+expectativa (perguntas demográficas/clínicas). YSQ-S3 e PANAS (protegidos e
+sensíveis a expectativa) continuam servidos só do banco. **Confirmar com a
+pesquisadora / CEP** se aceita o questionário sociodemográfico visível no
+repositório antes da aprovação ética; se não, mover para uma tabela de conteúdo
++ mini editor (custa ~meio dia).
+
 ### Pendências que NÃO bloqueiam C (registro)
 
 - Mapeamento item→subescala do PANAS e faixas de classificação.
@@ -76,28 +88,30 @@ forma: `sociodemographic_responses` (linha única por participante),
 `escalas_instrumento_participante`. RLS de participante (dono escreve, dono/admin
 leem) já está em 0004.
 
-### Migration `0011_coleta_basal.sql`
+### Migrations `0011` + `0012` (separadas por causa do enum)
 
+`0011_estados_terminais.sql`:
 ```sql
-alter type public.participant_step add value 'inelegivel';
-alter type public.participant_step add value 'interrompido';
-alter type public.invite_status  add value 'inelegivel';
-alter type public.invite_status  add value 'interrompido';
+alter type public.participant_step add value if not exists 'inelegivel';
+alter type public.participant_step add value if not exists 'interrompido';
 
 alter table public.sociodemographic_responses
-  add column elegivel boolean,
-  add column inelegibilidade_motivos text[];
+  add column if not exists elegivel boolean,
+  add column if not exists inelegibilidade_motivos text[];
 ```
 
-Ajuste no trigger `validar_avanco_etapa` (0006): além da regra monotônica,
-permitir explicitamente:
+`0012_avanco_para_estados_terminais.sql`: `create or replace function
+validar_avanco_etapa` (arquivo separado — Postgres não deixa usar um valor de
+enum recém-criado na mesma transação). Além da regra monotônica, aceita:
 - `sociodemografico → inelegivel`
 - qualquer etapa não-terminal → `interrompido`
 
 Ambos são terminais: uma vez em `inelegivel`/`interrompido`, nenhuma transição
-é aceita para não-admin. `ORDEM` do trigger permanece a sequência feliz; os dois
-novos valores são tratados como destinos laterais permitidos a partir das
-origens acima.
+é aceita para não-admin.
+
+**Não mexe em `invite_status`** — nada hoje sincroniza status do convite a
+partir do progresso do participante; o painel passa a mostrar os dois estados
+via `participants.etapa_atual` (ver `painelMetricas`).
 
 ### Seeds
 
@@ -140,11 +154,13 @@ src/routes/participar/
   Interrompido.tsx
 ```
 
-Rotas adicionadas em `App.tsx` sob `/participar`: `sociodemografico`, `ysq`,
-`panas` (substituem o placeholder para essas etapas), `inelegivel`,
-`interrompido`. `rotaDaEtapa` mapeia os novos estados; `EntrarComToken`
-trata `inelegivel`/`interrompido` como encerrados (não retoma — mensagem
-"Participação encerrada").
+Rotas: `/participar/etapa/:etapa` passa a ser servida por `EtapaInstrumento`,
+que exige sessão, redireciona se a etapa da URL ≠ etapa atual (retomada /
+anti-pulo) e despacha para `Sociodemografico` / `Ysq` / `Panas` (ou o
+placeholder para `instrucoes`/`vinhetas`). Novas rotas dedicadas
+`/participar/inelegivel` e `/participar/interrompido`. `rotaDaEtapa` mapeia os
+dois estados terminais; ao reentrar pelo link, `EntrarComToken` navega para a
+tela terminal (mensagem de encerramento), não retoma.
 
 ## Fluxos
 

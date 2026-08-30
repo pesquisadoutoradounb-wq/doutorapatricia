@@ -4,7 +4,9 @@ import { EntrarComToken } from "./routes/participar/EntrarComToken";
 import { Informacoes } from "./routes/participar/Informacoes";
 import { Tcle } from "./routes/participar/Tcle";
 import { ViaTcle } from "./routes/participar/ViaTcle";
-import { EtapaPlaceholder } from "./routes/participar/EtapaPlaceholder";
+import { EtapaInstrumento } from "./routes/participar/EtapaInstrumento";
+import { Inelegivel } from "./routes/participar/Inelegivel";
+import { Interrompido } from "./routes/participar/Interrompido";
 import { Encerramento } from "./routes/participar/Encerramento";
 import { PaginaDesconforto } from "./routes/participar/PaginaDesconforto";
 import { AdminLogin } from "./routes/admin/AdminLogin";
@@ -51,7 +53,9 @@ export function App() {
           <Route path="informacoes" element={<Informacoes />} />
           <Route path="tcle" element={<Tcle />} />
           <Route path="tcle/via" element={<ViaTcle />} />
-          <Route path="etapa/:etapa" element={<EtapaPlaceholder />} />
+          <Route path="etapa/:etapa" element={<EtapaInstrumento />} />
+          <Route path="inelegivel" element={<Inelegivel />} />
+          <Route path="interrompido" element={<Interrompido />} />
           <Route path="encerramento" element={<Encerramento />} />
           <Route path="desconforto" element={<PaginaDesconforto />} />
         </Route>

@@ -1,6 +1,7 @@
 # --- Conteúdo sensível: NUNCA versionar (repositório é público, instrumentos pré-CEP) ---
 docs/fonte-metodologia/
 docs/marca/
+Patricia/
 supabase/seed.local.sql
 supabase/.temp/
 supabase/.branches/

@@ -1,5 +1,9 @@
 import { supabase } from "./supabase";
-import { ETAPAS, type Etapa } from "./participantSession";
+import {
+  ETAPAS,
+  ETAPAS_TERMINAIS,
+  type EtapaParticipante,
+} from "./participantSession";
 
 export interface MetricasEstudo {
   totalConvites: number;
@@ -21,7 +25,7 @@ const ROTULO_STATUS: Record<string, string> = {
   expirado: "Expirado",
 };
 
-const ROTULO_ETAPA: Record<Etapa, string> = {
+const ROTULO_ETAPA: Record<EtapaParticipante, string> = {
   informacoes: "Informações gerais",
   tcle: "Consentimento (TCLE)",
   sociodemografico: "Sociodemográfico",
@@ -31,7 +35,11 @@ const ROTULO_ETAPA: Record<Etapa, string> = {
   vinhetas: "Tarefa de imaginação",
   encerramento: "Encerramento",
   concluido: "Concluído",
+  inelegivel: "Inelegível",
+  interrompido: "Interrompeu",
 };
+
+const ETAPAS_EXIBIDAS: EtapaParticipante[] = [...ETAPAS, ...ETAPAS_TERMINAIS];
 
 function diaISO(ts: string | null): string | null {
   if (!ts) return null;
@@ -57,8 +65,11 @@ export async function carregarMetricas(studyId: string): Promise<MetricasEstudo>
   const totalParticipantes = par.length;
   const acessaram = inv.filter((i) => i.primeiro_acesso_em).length;
 
-  const posTcle = new Set<Etapa>(ETAPAS.slice(ETAPAS.indexOf("sociodemografico")));
-  const consentiram = par.filter((p) => posTcle.has(p.etapa_atual as Etapa)).length;
+  const posTcle = new Set<string>([
+    ...ETAPAS.slice(ETAPAS.indexOf("sociodemografico")),
+    "inelegivel", // respondeu o sociodemográfico → passou pelo consentimento
+  ]);
+  const consentiram = par.filter((p) => posTcle.has(p.etapa_atual)).length;
   const concluidos = par.filter((p) => p.etapa_atual === "concluido" || p.concluido_em).length;
 
   // por status
@@ -71,9 +82,10 @@ export async function carregarMetricas(studyId: string): Promise<MetricasEstudo>
   // por etapa
   const etapaMap = new Map<string, number>();
   for (const p of par) etapaMap.set(p.etapa_atual, (etapaMap.get(p.etapa_atual) ?? 0) + 1);
-  const porEtapa = ETAPAS.map((e) => ({ rotulo: ROTULO_ETAPA[e], valor: etapaMap.get(e) ?? 0 })).filter(
-    (x) => x.valor > 0,
-  );
+  const porEtapa = ETAPAS_EXIBIDAS.map((e) => ({
+    rotulo: ROTULO_ETAPA[e],
+    valor: etapaMap.get(e) ?? 0,
+  })).filter((x) => x.valor > 0);
 
   // linha do tempo (acumulado por dia)
   const dias = new Set<string>();

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { ETAPAS, rotaDaEtapa } from "../../src/lib/participantSession";
+import {
+  ETAPAS,
+  ETAPAS_TERMINAIS,
+  ehEtapaTerminal,
+  rotaDaEtapa,
+} from "../../src/lib/participantSession";
 
 describe("participantSession", () => {
   it("tem as etapas na ordem obrigatória do protocolo", () => {
@@ -26,5 +31,20 @@ describe("participantSession", () => {
   it("encaminha 'encerramento' e 'concluido' para a tela de encerramento", () => {
     expect(rotaDaEtapa("encerramento")).toBe("/participar/encerramento");
     expect(rotaDaEtapa("concluido")).toBe("/participar/encerramento");
+  });
+
+  it("tem rotas dedicadas para os estados terminais", () => {
+    expect(rotaDaEtapa("inelegivel")).toBe("/participar/inelegivel");
+    expect(rotaDaEtapa("interrompido")).toBe("/participar/interrompido");
+  });
+
+  it("reconhece etapas terminais e não as inclui na sequência feliz", () => {
+    expect(ETAPAS_TERMINAIS).toEqual(["inelegivel", "interrompido"]);
+    expect(ehEtapaTerminal("inelegivel")).toBe(true);
+    expect(ehEtapaTerminal("interrompido")).toBe(true);
+    expect(ehEtapaTerminal("ysq")).toBe(false);
+    for (const t of ETAPAS_TERMINAIS) {
+      expect((ETAPAS as readonly string[]).includes(t)).toBe(false);
+    }
   });
 });

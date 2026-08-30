@@ -71,6 +71,41 @@ PANAS_ITENS = [
     "Inspirado", "Interessado", "Forte", "Com medo", "Envergonhado", "Aflito",
     "Culpado", "Hostil", "Irritável", "Inquieto", "Nervoso", "Apavorado", "Chateado",
 ]
+
+# Instruções dos instrumentos e mensagem de inelegibilidade. Rascunhos editáveis
+# pela pesquisadora no painel (study_documents). A da PANAS já incorpora a
+# reescrita aprovada em PERGUNTAR 11 ("neste momento", sem "terapeuta"); a
+# mensagem de inelegibilidade é o texto fornecido pela pesquisadora (PERGUNTAR 7).
+YSQ_INSTRUCAO = [
+    "As afirmações a seguir descrevem maneiras de a pessoa pensar e sentir a "
+    "respeito de si mesma.",
+    "Leia cada afirmação e escolha, de 1 a 6, o número que melhor descreve o "
+    "quanto ela se aplica a você. Quando estiver em dúvida, responda com base no "
+    "que você sente emocionalmente, e não no que acredita ser racionalmente "
+    "verdadeiro.",
+]
+PANAS_INSTRUCAO = [
+    "Esta escala é composta por palavras que descrevem diferentes sentimentos e "
+    "emoções.",
+    "Leia cada item e indique, de 1 a 5, em que medida cada palavra descreve "
+    "como você realmente se sente neste momento.",
+]
+INELEGIBILIDADE = [
+    "Agradecemos seu interesse em participar desta pesquisa.",
+    "Com base nas informações fornecidas no questionário inicial, verificamos "
+    "que, neste momento, um ou mais critérios necessários para participação no "
+    "estudo não foram atendidos.",
+    "Esses critérios foram previamente definidos de acordo com as "
+    "características e os procedimentos da pesquisa e incluem requisitos "
+    "relacionados à idade e às condições técnicas necessárias para a realização "
+    "das atividades propostas.",
+    "Por esse motivo, não será possível prosseguir para as próximas etapas do "
+    "estudo.",
+    "Agradecemos sinceramente sua disponibilidade, seu tempo e seu interesse em "
+    "contribuir com a pesquisa. Sua participação até este momento é muito "
+    "importante para nós.",
+    "Muito obrigado(a) por sua colaboração.",
+]
 YSQ_ESCALA = [
     "Completamente falso sobre mim", "Em grande parte falso sobre mim",
     "Um pouco mais verdadeiro do que falso sobre mim", "Moderadamente verdadeiro sobre mim",
@@ -95,6 +130,9 @@ def main() -> int:
             vinhetas.append(m.group(1).strip())
     assert len(vinhetas) == 10 and len(titulos) == 10, "extração de vinhetas falhou"
 
+    def paras_html(paras: list[str]) -> str:
+        return "".join(f"<p>{html.escape(p)}</p>" for p in paras)
+
     docs = [
         ("tcle", "rascunho-fonte-2026-08", "Termo de Consentimento Livre e Esclarecido — TCLE",
          html_de_paras(docx_paras(FONTE / "TERMO DE CONSENTIMENTO LIVRE E ESCLARECIDO estudo 1.docx"))),
@@ -102,6 +140,12 @@ def main() -> int:
          html_de_paras(docx_paras(FONTE / "Instruções gerais ao participante.docx"))),
         ("encerramento", "fonte-2026-08", "Obrigado(a) por sua participação",
          html_de_paras(docx_paras(FONTE / "encerramento do procedimento experimental.docx"))),
+        ("ysq_instrucoes", "rascunho-2026-08", "Instruções — Questionário de Esquemas (YSQ-S3)",
+         paras_html(YSQ_INSTRUCAO)),
+        ("panas_instrucoes", "rascunho-2026-08", "Instruções — Escala de Afetos (PANAS)",
+         paras_html(PANAS_INSTRUCAO)),
+        ("inelegibilidade", "fonte-2026-08", "Agradecemos seu interesse",
+         paras_html(INELEGIBILIDADE)),
     ]
 
     itens_ysq = ysq_itens()
@@ -111,7 +155,7 @@ def main() -> int:
     out: list[str] = [
         "-- GERADO por scripts/gerar-seed-local.py — NÃO versionar.",
         "-- Conteúdo pré-CEP. Conferir PERGUNTAR 1,2,9,11,12,13,14,16,17,21,22 antes da coleta.",
-        "-- Requer as migrations 0001-0010 aplicadas.\n",
+        "-- Requer as migrations 0001-0012 aplicadas.\n",
         "-- ===== documentos do Estudo 1 =====",
     ]
     for slug, ver, tit, corpo in docs:

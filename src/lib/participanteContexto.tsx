@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "./supabase";
-import type { Etapa } from "./participantSession";
+import type { EtapaParticipante } from "./participantSession";
 
 export interface DadosParticipante {
   id: string;
-  etapaAtual: Etapa;
+  etapaAtual: EtapaParticipante;
   studyId: string;
   studyNome: string | null;
   modo: "piloto" | "producao";
@@ -44,7 +44,7 @@ async function carregar(): Promise<Estado> {
     fase: "ok",
     dados: {
       id: data.id,
-      etapaAtual: data.etapa_atual as Etapa,
+      etapaAtual: data.etapa_atual as EtapaParticipante,
       studyId: data.study_id,
       studyNome,
       modo: data.modo as "piloto" | "producao",
