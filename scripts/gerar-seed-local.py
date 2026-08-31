@@ -90,77 +90,14 @@ PANAS_INSTRUCAO = [
     "Leia cada item e indique, de 1 a 5, em que medida cada palavra descreve "
     "como você realmente se sente neste momento.",
 ]
-# Corpo HTML do e-mail de convite (documento `convite_email`). Tabela + estilos
-# inline, sem <style>/webfonts (não sobrevivem a Gmail/Outlook). Renderizado por
-# supabase/functions/_shared/emailConvite.ts:
-#   {{nome}}        -> nome do convidado (ou "participante")
-#   {{link}}        -> link individual de participação
-#   {{link_recusa}} -> link individual de recusa
-# Colchetes editáveis pela pesquisadora no painel: [X] (duração), [CONTATO/CEP].
-CONVITE_EMAIL_HTML = """\
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Convite para \
-participar de uma pesquisa de doutorado da Universidade de Brasília (UnB).</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" \
-style="background:#eef1f5;padding:24px 0;">
-<tr><td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" \
-style="width:600px;max-width:600px;background:#ffffff;border:1px solid #d9e2ec;">
-<tr><td style="background:#1a3852;padding:22px 32px;">
-<div style="font-family:Georgia,'Times New Roman',serif;color:#ffffff;font-size:16px;\
-letter-spacing:1px;">PESQUISA DE DOUTORADO &middot; UnB</div>
-<div style="height:2px;width:44px;background:#b8912f;margin-top:10px;font-size:0;\
-line-height:0;">&nbsp;</div>
-</td></tr>
-<tr><td style="padding:28px 32px 4px 32px;font-family:Arial,Helvetica,sans-serif;\
-color:#21303d;font-size:15px;line-height:1.6;">
-<p style="margin:0 0 16px 0;">Olá, {{nome}}.</p>
-<p style="margin:0 0 16px 0;">Você foi convidado(a) a participar de uma pesquisa de \
-doutorado do Programa de Pós-Graduação em Psicologia Clínica e Cultura da \
-Universidade de Brasília (UnB), conduzida pela pesquisadora Patrícia Galvão.</p>
-<p style="margin:0 0 16px 0;">A participação é on-line, individual e voluntária, \
-leva cerca de [X] minutos e pode ser interrompida a qualquer momento. As \
-primeiras telas trazem as informações completas sobre o estudo e o Termo de \
-Consentimento Livre e Esclarecido.</p>
-</td></tr>
-<tr><td align="center" style="padding:8px 32px 20px 32px;">
-<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td \
-style="background:#2f6690;border:1px solid #b8912f;border-radius:8px;">
-<a href="{{link}}" style="display:inline-block;padding:13px 30px;\
-font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;\
-color:#ffffff;text-decoration:none;">Acessar minha participação</a>
-</td></tr></table>
-</td></tr>
-<tr><td style="padding:0 32px 18px 32px;font-family:Arial,Helvetica,sans-serif;\
-color:#5c6b78;font-size:13px;line-height:1.6;">
-<p style="margin:0 0 6px 0;">Ou copie e cole este endereço no navegador:</p>
-<p style="margin:0;word-break:break-all;"><a href="{{link}}" \
-style="color:#2f6690;">{{link}}</a></p>
-</td></tr>
-<tr><td style="padding:0 32px 18px 32px;font-family:Arial,Helvetica,sans-serif;\
-color:#21303d;font-size:14px;line-height:1.6;">
-<p style="margin:0;">Este link é pessoal e individual &mdash; não o compartilhe.</p>
-</td></tr>
-<tr><td style="padding:0 32px;"><div style="border-top:1px solid #e7edf3;\
-font-size:0;line-height:0;">&nbsp;</div></td></tr>
-<tr><td style="padding:18px 32px 24px 32px;font-family:Arial,Helvetica,sans-serif;\
-color:#5c6b78;font-size:13px;line-height:1.6;">
-<p style="margin:0 0 4px 0;">Não tem interesse em participar?</p>
-<p style="margin:0;"><a href="{{link_recusa}}" style="color:#2f6690;\
-font-weight:bold;">Não tenho interesse</a> &mdash; avise-nos e não enviaremos \
-novos contatos sobre esta pesquisa.</p>
-</td></tr>
-<tr><td style="background:#f2f5f9;padding:18px 32px;\
-font-family:Arial,Helvetica,sans-serif;color:#5c6b78;font-size:12px;\
-line-height:1.6;border-top:1px solid #e7edf3;">
-<p style="margin:0 0 2px 0;font-family:Georgia,'Times New Roman',serif;\
-color:#21303d;font-size:13px;">Patrícia Galvão &mdash; pesquisadora responsável</p>
-<p style="margin:0 0 8px 0;">Doutorado em Psicologia Clínica e Cultura &middot; \
-Universidade de Brasília</p>
-<p style="margin:0;">Dúvidas: responda a este e-mail &middot; [CONTATO/CEP]</p>
-</td></tr>
-</table>
-</td></tr>
-</table>"""
+# Corpo HTML do e-mail de convite (documento `convite_email`). Fonte única:
+# supabase/templates/convite-email.html (versionado). O comentário-cabeçalho do
+# arquivo é removido; o restante entra como `corpo_html`.
+CONVITE_EMAIL_HTML = re.sub(
+    r"^\s*<!--.*?-->\s*", "",
+    Path("supabase/templates/convite-email.html").read_text(encoding="utf-8"),
+    count=1, flags=re.S,
+).strip()
 INELEGIBILIDADE = [
     "Agradecemos seu interesse em participar desta pesquisa.",
     "Com base nas informações fornecidas no questionário inicial, verificamos "

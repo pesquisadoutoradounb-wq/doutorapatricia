@@ -215,9 +215,10 @@ Estrutura:
 4. **Rodapé** `#f2f5f9`, `#5c6b78` ~12px: assinatura da pesquisadora + linha
    institucional + "Dúvidas: responda a este e-mail · [CONTATO/CEP]".
 
-O HTML final entra em `scripts/gerar-seed-local.py` (`CONVITE_EMAIL` deixa de ser
-lista de parágrafos e passa a ser a string HTML) e no `seed.example.sql`
-(placeholder curto atualizado).
+O HTML fica em `supabase/templates/convite-email.html` (versionado — é conteúdo
+operacional, não metodológico). `scripts/gerar-seed-local.py` lê esse arquivo
+(remove o comentário-cabeçalho) e o carrega como `corpo_html`; `seed.example.sql`
+só aponta para ele.
 
 ## Sequência da recusa
 

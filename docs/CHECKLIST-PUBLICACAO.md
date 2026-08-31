@@ -40,11 +40,12 @@ psql "<DB_URL>" -f supabase/seed.local.sql
 - [ ] **Mensagem de encerramento** — revisar o rascunho-fonte.
 - [ ] **Mensagem de inelegibilidade** — revisar (texto da pesquisadora já
       carregado).
-- [ ] **E-mail de convite** — revisar; manter `{{nome}}`, `{{link}}` e
+- [ ] **E-mail de convite** — corpo em `supabase/templates/convite-email.html`
+      (versionado; editável também no painel). Manter `{{nome}}`, `{{link}}` e
       `{{link_recusa}}`; preencher `[X]` (duração) e `[CONTATO/CEP]`; o título do
-      documento vira o assunto. **Publicar o corpo HTML novo** (o
-      `gerar-seed-local.py` já o gera): sem ele, um `{{link}}` sozinho deixa de
-      virar hyperlink (mudança de contrato do `renderCorpoConvite`).
+      documento vira o assunto. **Publicar este corpo HTML** (o
+      `gerar-seed-local.py` já o carrega): sem ele, um `{{link}}` sozinho deixa
+      de virar hyperlink (mudança de contrato do `renderCorpoConvite`).
 - [ ] **Instruções do YSQ / PANAS** — revisar (rascunhos genéricos).
 
 ## 4. Equipe
