@@ -6,8 +6,10 @@ conferência.
 
 ## 1. Banco de dados
 
-- [ ] Aplicar todas as migrations: `supabase db push` (ou `supabase db reset`
-      no ambiente de staging). Vai de `0001` a `0015`.
+- [x] Aplicar todas as migrations: `supabase db push`. `0001`–`0015` aplicadas
+      em produção (2026-08-31). `0011`–`0014` já tinham partes aplicadas à mão
+      antes — os guards `if not exists` cobriram; `schema_migrations` agora
+      registra tudo.
 - [ ] Confirmar que o bucket de Storage `audios` existe e está público.
 
 ## 2. Conteúdo dos instrumentos (só no banco — repo é público)
@@ -56,11 +58,13 @@ psql "<DB_URL>" -f supabase/seed.local.sql
 
 ## 5. E-mail (Brevo)
 
+- [x] `supabase functions deploy` — 5 functions ativas em produção
+      (2026-08-31), incluindo `recusar-convite` (sem JWT via `config.toml`).
 - [ ] Criar conta no Brevo, verificar um remetente (domínio ou e-mail).
-- [ ] `supabase secrets set` para: `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`,
+- [ ] **`supabase secrets set`** para: `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`,
       `BREVO_SENDER_NAME`, `APP_BASE_URL`, `BREVO_WEBHOOK_SECRET`.
-- [ ] `supabase functions deploy` (inclui `recusar-convite`, sem JWT —
-      `config.toml` já declara `verify_jwt = false`).
+      **Hoje NENHUM está definido** — `send-invite` responde `501` e não cria
+      convites até isso ser feito. (`recusar-convite` não depende do Brevo.)
 - [ ] No Brevo, cadastrar o webhook de eventos transacionais apontando para
       `<SUPABASE_URL>/functions/v1/brevo-webhook?s=<BREVO_WEBHOOK_SECRET>`
       (eventos: delivered, opened, click, hard_bounce, soft_bounce, spam).
