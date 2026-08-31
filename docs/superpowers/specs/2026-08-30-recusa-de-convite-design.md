@@ -29,7 +29,7 @@ e-mail hoje é uma sequência de `<p>` sem identidade visual.
 **Entra:**
 - Novo estado `recusou` em `invite_status` + coluna `invites.recusado_em`.
 - Edge Function pública `recusar-convite` (token, sem JWT), idempotente.
-- Rota `/#/recusar/:token` (zona do participante) que registra a recusa em 1
+- Rota `/#/participar/recusar/:token` (zona do participante) que registra a recusa em 1
   clique (POST via JS — à prova de pré-fetch de cliente de e-mail).
 - `send-invite`: `renderCorpo` passa a expor `{{link}}` e `{{link_recusa}}` como
   URL crua escapada; novo placeholder `{{link_recusa}}`.
@@ -53,7 +53,7 @@ e-mail hoje é uma sequência de `<p>` sem identidade visual.
 
 | Tema | Decisão |
 |---|---|
-| Recusa UX | **1 clique + confirmação**: a rota `/#/recusar/:token` faz um POST no `onMount`; mostra "registrando…" e depois a confirmação. Sem botão extra. |
+| Recusa UX | **1 clique + confirmação**: a rota `/#/participar/recusar/:token` faz um POST no `onMount`; mostra "registrando…" e depois a confirmação. Sem botão extra. |
 | Robustez a pré-fetch | A mutação é um `POST` disparado por JavaScript, não um efeito de GET. Scanners/antivírus que só fazem `GET` na URL não disparam recusa. |
 | Identidade do e-mail | **UnB + nome da pesquisadora.** Faixa `#1a3852`, filete `#b8912f`, assinatura "Patrícia Galvão — pesquisadora responsável · Doutorado em Psicologia Clínica e Cultura, UnB". |
 | Reversão | Convite `recusou` **não** deixa o convidado entrar pelo link de participação. `EntrarComToken` mostra "se mudou de ideia, fale com a equipe". Admin reverte manualmente (mudar `status`, ou reenviar). |
@@ -113,7 +113,7 @@ return html
   .split("{{link_recusa}}").join(escapeHtml(linkRecusa));
 ```
 
-`linkRecusa = `${appUrl}/#/recusar/${token}``. Calculado nos dois caminhos
+`linkRecusa = `${appUrl}/#/participar/recusar/${token}``. Calculado nos dois caminhos
 (criar+enviar e reenviar), ao lado do `link` que já existe.
 
 **Regressão conhecida:** um `convite_email` que hoje tenha `{{link}}` sozinho

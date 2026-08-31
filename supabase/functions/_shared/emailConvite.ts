@@ -3,6 +3,17 @@
 // Extraído de `send-invite/index.ts` para ser testável (o index tem `Deno.serve`
 // e não é importável pelo vitest). Mesmo padrão de `_shared/brevoEventos.ts`.
 
+/**
+ * Links individuais do convite. DEVEM casar com as rotas de src/App.tsx:
+ *   /participar/:token          -> EntrarComToken
+ *   /participar/recusar/:token  -> RecusarConvite
+ * (o `#` é do HashRouter usado no GitHub Pages).
+ */
+export const linkParticipacao = (appUrl: string, token: string) =>
+  `${appUrl}/#/participar/${token}`;
+export const linkRecusa = (appUrl: string, token: string) =>
+  `${appUrl}/#/participar/recusar/${token}`;
+
 export function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")

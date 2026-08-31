@@ -70,7 +70,7 @@ psql "<DB_URL>" -f supabase/seed.local.sql
       (eventos: delivered, opened, click, hard_bounce, soft_bounce, spam).
 - [ ] Enviar um convite de teste para uma conta própria: conferir o layout do
       e-mail no Gmail e no Outlook, o botão, o link de participação e o link
-      "Não tenho interesse" (deve levar a `/#/recusar/<token>` e marcar o
+      "Não tenho interesse" (deve levar a `/#/participar/recusar/<token>` e marcar o
       convite como **Recusou** no painel).
 
 ## 6. Front-end

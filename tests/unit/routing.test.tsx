@@ -54,6 +54,14 @@ describe("separação de rotas participante × admin", () => {
     ).toBeInTheDocument();
   });
 
+  it("/participar/recusar/:token monta a tela de recusa (não é 404)", async () => {
+    window.location.hash = "#/participar/recusar/00000000-0000-4000-8000-000000000000";
+    render(<App />);
+    expect(
+      await screen.findByText(/registrando sua resposta/i),
+    ).toBeInTheDocument();
+  });
+
   it("/admin/login redireciona para a raiz (login canônico)", async () => {
     window.location.hash = "#/admin/login";
     render(<App />);

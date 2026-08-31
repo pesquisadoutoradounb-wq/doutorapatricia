@@ -1,11 +1,25 @@
 import { describe, expect, it } from "vitest";
 import {
   escapeHtml,
+  linkParticipacao,
+  linkRecusa,
   renderCorpoConvite,
 } from "../../supabase/functions/_shared/emailConvite";
 
+const APP = "https://ex.github.io/doutorapatricia";
+const TOK = "abc-123";
+
 const LINK = "https://ex.github.io/app/#/participar/abc-123";
 const LINK_RECUSA = "https://ex.github.io/app/#/recusar/abc-123";
+
+describe("links do convite (têm de casar com as rotas de src/App.tsx)", () => {
+  it("participação: /#/participar/:token", () => {
+    expect(linkParticipacao(APP, TOK)).toBe(`${APP}/#/participar/${TOK}`);
+  });
+  it("recusa: /#/participar/recusar/:token", () => {
+    expect(linkRecusa(APP, TOK)).toBe(`${APP}/#/participar/recusar/${TOK}`);
+  });
+});
 
 describe("escapeHtml", () => {
   it("escapa <, >, & e aspas", () => {

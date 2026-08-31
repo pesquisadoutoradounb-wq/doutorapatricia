@@ -8,7 +8,11 @@
 
 import { respostaJson, corsHeaders } from "../_shared/cors.ts";
 import { supabaseAdmin, supabaseComoUsuario } from "../_shared/supabaseAdmin.ts";
-import { renderCorpoConvite } from "../_shared/emailConvite.ts";
+import {
+  linkParticipacao,
+  linkRecusa,
+  renderCorpoConvite,
+} from "../_shared/emailConvite.ts";
 
 const BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 const DIAS_PADRAO = 30;
@@ -17,11 +21,6 @@ interface EntradaConvite {
   email: string;
   nome?: string | null;
 }
-
-const linkParticipacao = (appUrl: string, token: string) =>
-  `${appUrl}/#/participar/${token}`;
-const linkRecusa = (appUrl: string, token: string) =>
-  `${appUrl}/#/recusar/${token}`;
 
 async function carregarDocConvite(admin: ReturnType<typeof supabaseAdmin>, studyId: string) {
   const { data } = await admin
