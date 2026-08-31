@@ -1646,6 +1646,11 @@ textarea:focus-visible {
   padding: clamp(1.25rem, 1rem + 1.4vw, 1.9rem);
   max-width: 30rem;
   width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.modal-cartao--form {
+  max-width: 36rem;
 }
 .modal-cartao h2 {
   margin-top: 0;
@@ -1659,6 +1664,63 @@ textarea:focus-visible {
   flex-wrap: wrap;
   gap: var(--espaco-3);
   margin-top: var(--espaco-6);
+}
+
+/* Modal de cadastro de convites (painel) */
+.modal-form-linhas {
+  display: grid;
+  gap: var(--espaco-3);
+  margin: var(--espaco-4) 0 var(--espaco-2);
+}
+.modal-form-linha {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr auto;
+  gap: var(--espaco-3);
+  align-items: start;
+}
+.modal-form-campo {
+  margin-bottom: 0;
+}
+.modal-form-campo .campo__rotulo {
+  font-size: 0.78rem;
+}
+.modal-form-linha__remover {
+  margin-top: 22px;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  color: var(--tinta-suave);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.modal-form-linha__remover:hover:not(:disabled) {
+  border-color: var(--erro);
+  color: var(--erro);
+}
+.modal-form-linha__remover:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.campo__erro {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--erro);
+}
+input[aria-invalid="true"] {
+  border-color: var(--erro);
+}
+@media (max-width: 560px) {
+  .modal-form-linha {
+    grid-template-columns: 1fr auto;
+  }
+  .modal-form-linha .modal-form-campo:first-of-type {
+    grid-column: 1 / -1;
+  }
 }
 
 /* =========================================================================

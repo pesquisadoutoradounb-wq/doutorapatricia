@@ -13,7 +13,7 @@ export interface ResultadoCsv {
   erros: { linha: number; motivo: string }[];
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function separaCampos(linha: string, delim: string): string[] {
   const out: string[] = [];

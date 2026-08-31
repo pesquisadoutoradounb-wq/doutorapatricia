@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useEstudo } from "./EstudoLayout";
 import { AlternadorModo } from "../../components/painel/AlternadorModo";
 import { CabecalhoTela } from "../../components/painel/CabecalhoTela";
 import { TabelaCartao } from "../../components/painel/TabelaCartao";
 import { Selo, type TomSelo } from "../../components/painel/Selo";
-import { parseCsvConvites } from "../../lib/csvConvites";
+import { ModalConvite } from "../../components/painel/ModalConvite";
+import { parseCsvConvites, type LinhaConvite } from "../../lib/csvConvites";
 import {
   criarConvites,
   excluirConvite,
@@ -46,12 +47,14 @@ export function Convites() {
   const estudo = useEstudo();
   const [incluirPiloto, setIncluirPiloto] = useState(false);
   const [convites, setConvites] = useState<ConviteAdmin[] | null>(null);
-  const [texto, setTexto] = useState("");
-  const [enviando, setEnviando] = useState(false);
-  const [resultado, setResultado] = useState<ResultadoEnvio | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [linkTeste, setLinkTeste] = useState<string | null>(null);
   const [ocupadoId, setOcupadoId] = useState<string | null>(null);
+
+  const [modalAberto, setModalAberto] = useState(false);
+  const [linhasCsv, setLinhasCsv] = useState<LinhaConvite[] | undefined>();
+  const [avisoCsv, setAvisoCsv] = useState<string | null>(null);
+  const [resumo, setResumo] = useState<ResultadoEnvio | null>(null);
 
   async function recarregar(studyId: string) {
     setConvites(await listarConvites(studyId, { incluirPiloto }));
@@ -62,19 +65,33 @@ export function Convites() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [estudo?.id, incluirPiloto]);
 
-  const parsed = useMemo(() => parseCsvConvites(texto), [texto]);
+  function abrirCadastro() {
+    setLinhasCsv(undefined);
+    setAvisoCsv(null);
+    setResumo(null);
+    setModalAberto(true);
+  }
 
-  async function enviar() {
-    if (!estudo || parsed.linhas.length === 0) return;
-    setErro(null);
-    setResultado(null);
-    setEnviando(true);
-    const r = await criarConvites(estudo.id, parsed.linhas);
-    setEnviando(false);
-    if (!r.ok) return setErro(r.motivo);
-    setResultado(r.resultado);
-    setTexto("");
-    recarregar(estudo.id);
+  async function importarCsv(file: File) {
+    const { linhas, erros } = parseCsvConvites(await file.text());
+    if (linhas.length === 0) {
+      setAvisoCsv("Nenhum e-mail válido encontrado no arquivo.");
+      return;
+    }
+    setAvisoCsv(
+      erros.length > 0
+        ? `${erros.length} linha(s) do arquivo foram ignoradas por problema de formato.`
+        : null,
+    );
+    setLinhasCsv(linhas);
+    setResumo(null);
+    setModalAberto(true);
+  }
+
+  function fecharModal(recarregarLista: boolean) {
+    setModalAberto(false);
+    setLinhasCsv(undefined);
+    if (recarregarLista && estudo) recarregar(estudo.id);
   }
 
   return (
@@ -123,70 +140,52 @@ export function Convites() {
               </div>
               <div className="cartao-painel__corpo form-limite">
                 <p className="documento__versao">
-                  Um e-mail por linha, ou <code>email, nome</code> /{" "}
-                  <code>email; nome</code>. Cabeçalho é ignorado.
+                  Cada convite gera um link individual e dispara o e-mail
+                  transacional. Cadastre um a um ou importe uma planilha
+                  (<code>.csv</code> com colunas e-mail e nome).
                 </p>
-                <textarea
-                  rows={6}
-                  value={texto}
-                  placeholder={"maria@exemplo.com, Maria\njoao@exemplo.com"}
-                  onChange={(e) => setTexto(e.target.value)}
-                />
-                <label className="campo" style={{ marginTop: "var(--espaco-3)" }}>
-                  <span className="campo__rotulo">Ou importe um arquivo .csv</span>
-                  <input
-                    type="file"
-                    accept=".csv,text/csv"
-                    onChange={async (e) => {
-                      const f = e.target.files?.[0];
-                      if (f) setTexto(await f.text());
-                      e.target.value = "";
-                    }}
-                  />
-                </label>
 
-                {texto.trim() && (
-                  <p className="documento__versao">
-                    {parsed.linhas.length} e-mail(s) válido(s)
-                    {parsed.erros.length > 0 &&
-                      `, ${parsed.erros.length} com problema`}
-                    .
-                  </p>
-                )}
-                {parsed.erros.length > 0 && (
-                  <ul className="erro-caixa">
-                    {parsed.erros.slice(0, 8).map((e) => (
-                      <li key={e.linha}>
-                        Linha {e.linha}: {e.motivo}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <div className="painel-barra" style={{ marginTop: "var(--espaco-3)" }}>
+                  <button type="button" className="botao" onClick={abrirCadastro}>
+                    Cadastrar convite
+                  </button>
+                  <label className="botao botao--secundario" style={{ cursor: "pointer" }}>
+                    Importar CSV
+                    <input
+                      type="file"
+                      accept=".csv,text/csv"
+                      className="visualmente-oculto"
+                      onChange={async (e) => {
+                        const f = e.target.files?.[0];
+                        if (f) await importarCsv(f);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                </div>
 
-                {erro && <p className="erro-caixa">{erro}</p>}
-                {resultado && (
+                {avisoCsv && <p className="aviso">{avisoCsv}</p>}
+                {resumo && (
                   <p className="sucesso-caixa">
-                    {resultado.criados} criado(s), {resultado.enviados} enviado(s).
-                    {resultado.erros.length > 0 &&
-                      ` Falhas: ${resultado.erros.map((x) => x.email).join(", ")}.`}
+                    {resumo.criados} criado(s), {resumo.enviados} enviado(s).
                   </p>
                 )}
-
-                <button
-                  type="button"
-                  className="botao"
-                  disabled={enviando || parsed.linhas.length === 0}
-                  onClick={enviar}
-                >
-                  {enviando
-                    ? "Cadastrando…"
-                    : parsed.linhas.length > 0
-                      ? `Cadastrar ${parsed.linhas.length} convite(s)`
-                      : "Cadastrar convite(s)"}
-                </button>
+                {erro && <p className="erro-caixa">{erro}</p>}
               </div>
             </section>
           </div>
+
+          <ModalConvite
+            aberto={modalAberto}
+            linhasIniciais={linhasCsv}
+            onFechar={fecharModal}
+            onCadastrar={async (linhas) => {
+              if (!estudo) return { ok: false as const, motivo: "Estudo não carregado." };
+              const r = await criarConvites(estudo.id, linhas);
+              if (r.ok) setResumo(r.resultado);
+              return r;
+            }}
+          />
 
           <TabelaCartao
             titulo="Convites"
