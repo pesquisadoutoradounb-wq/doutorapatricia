@@ -7,7 +7,7 @@ conferência.
 ## 1. Banco de dados
 
 - [ ] Aplicar todas as migrations: `supabase db push` (ou `supabase db reset`
-      no ambiente de staging). Vai de `0001` a `0014`.
+      no ambiente de staging). Vai de `0001` a `0015`.
 - [ ] Confirmar que o bucket de Storage `audios` existe e está público.
 
 ## 2. Conteúdo dos instrumentos (só no banco — repo é público)
@@ -40,8 +40,11 @@ psql "<DB_URL>" -f supabase/seed.local.sql
 - [ ] **Mensagem de encerramento** — revisar o rascunho-fonte.
 - [ ] **Mensagem de inelegibilidade** — revisar (texto da pesquisadora já
       carregado).
-- [ ] **E-mail de convite** — revisar; manter `{{nome}}` e `{{link}}`; o
-      título do documento vira o assunto do e-mail.
+- [ ] **E-mail de convite** — revisar; manter `{{nome}}`, `{{link}}` e
+      `{{link_recusa}}`; preencher `[X]` (duração) e `[CONTATO/CEP]`; o título do
+      documento vira o assunto. **Publicar o corpo HTML novo** (o
+      `gerar-seed-local.py` já o gera): sem ele, um `{{link}}` sozinho deixa de
+      virar hyperlink (mudança de contrato do `renderCorpoConvite`).
 - [ ] **Instruções do YSQ / PANAS** — revisar (rascunhos genéricos).
 
 ## 4. Equipe
@@ -55,10 +58,15 @@ psql "<DB_URL>" -f supabase/seed.local.sql
 - [ ] Criar conta no Brevo, verificar um remetente (domínio ou e-mail).
 - [ ] `supabase secrets set` para: `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`,
       `BREVO_SENDER_NAME`, `APP_BASE_URL`, `BREVO_WEBHOOK_SECRET`.
-- [ ] `supabase functions deploy`.
+- [ ] `supabase functions deploy` (inclui `recusar-convite`, sem JWT —
+      `config.toml` já declara `verify_jwt = false`).
 - [ ] No Brevo, cadastrar o webhook de eventos transacionais apontando para
       `<SUPABASE_URL>/functions/v1/brevo-webhook?s=<BREVO_WEBHOOK_SECRET>`
       (eventos: delivered, opened, click, hard_bounce, soft_bounce, spam).
+- [ ] Enviar um convite de teste para uma conta própria: conferir o layout do
+      e-mail no Gmail e no Outlook, o botão, o link de participação e o link
+      "Não tenho interesse" (deve levar a `/#/recusar/<token>` e marcar o
+      convite como **Recusou** no painel).
 
 ## 6. Front-end
 

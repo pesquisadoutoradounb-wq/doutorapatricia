@@ -1,7 +1,7 @@
 # Recusa de convite + e-mail de convite em HTML · Design
 
 **Estudo 1 — Ativação Experimental de Esquemas e Imagética Mental (UnB)**
-Data: 2026-08-30 · Status: aprovado para implementação · Extensão do sub-projeto E1
+Data: 2026-08-30 · Status: implementado · Extensão do sub-projeto E1
 
 ---
 

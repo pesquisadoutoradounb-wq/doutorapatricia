@@ -50,6 +50,11 @@ export function EntrarComToken() {
       corpo:
         "As respostas vinculadas a este convite já foram concluídas. Agradecemos pela sua participação.",
     },
+    convite_recusado: {
+      titulo: "Convite recusado",
+      corpo:
+        "Você indicou anteriormente que não deseja participar desta pesquisa. Se mudou de ideia, entre em contato com a equipe de pesquisa respondendo ao e-mail do convite.",
+    },
     erro_rede: {
       titulo: "Não foi possível conectar",
       corpo:

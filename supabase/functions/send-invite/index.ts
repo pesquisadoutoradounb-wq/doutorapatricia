@@ -8,6 +8,7 @@
 
 import { respostaJson, corsHeaders } from "../_shared/cors.ts";
 import { supabaseAdmin, supabaseComoUsuario } from "../_shared/supabaseAdmin.ts";
+import { renderCorpoConvite } from "../_shared/emailConvite.ts";
 
 const BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 const DIAS_PADRAO = 30;
@@ -17,20 +18,10 @@ interface EntradaConvite {
   nome?: string | null;
 }
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function renderCorpo(html: string, nome: string | null, link: string): string {
-  const linkHtml = `<a href="${escapeHtml(link)}">${escapeHtml(link)}</a>`;
-  return html
-    .split("{{nome}}").join(escapeHtml(nome || "participante"))
-    .split("{{link}}").join(linkHtml);
-}
+const linkParticipacao = (appUrl: string, token: string) =>
+  `${appUrl}/#/participar/${token}`;
+const linkRecusa = (appUrl: string, token: string) =>
+  `${appUrl}/#/recusar/${token}`;
 
 async function carregarDocConvite(admin: ReturnType<typeof supabaseAdmin>, studyId: string) {
   const { data } = await admin
@@ -121,12 +112,16 @@ Deno.serve(async (req) => {
     const doc = await carregarDocConvite(admin, inv.study_id);
     if (!doc) return respostaJson({ erro: "sem_documento_convite" }, 501, origin);
 
-    const link = `${appUrl}/#/participar/${inv.token}`;
     const env = await enviarBrevo(
       cfg,
       { email: inv.email, nome: inv.nome },
       doc.titulo,
-      renderCorpo(doc.corpo_html, inv.nome, link),
+      renderCorpoConvite(
+        doc.corpo_html,
+        inv.nome,
+        linkParticipacao(appUrl, inv.token),
+        linkRecusa(appUrl, inv.token),
+      ),
       inv.id,
     );
     if (!env.ok) {
@@ -201,12 +196,16 @@ Deno.serve(async (req) => {
       criados++;
     }
 
-    const link = `${appUrl}/#/participar/${inv.token}`;
     const env = await enviarBrevo(
       cfg,
       { email, nome: c.nome },
       doc.titulo,
-      renderCorpo(doc.corpo_html, c.nome ?? null, link),
+      renderCorpoConvite(
+        doc.corpo_html,
+        c.nome ?? null,
+        linkParticipacao(appUrl, inv.token),
+        linkRecusa(appUrl, inv.token),
+      ),
       inv.id,
     );
     if (!env.ok) {

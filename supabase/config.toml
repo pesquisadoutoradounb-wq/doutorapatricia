@@ -65,3 +65,7 @@ verify_jwt = true
 [functions.brevo-webhook]
 # Chamada externa pelo Brevo; validada por BREVO_WEBHOOK_SECRET.
 verify_jwt = false
+
+[functions.recusar-convite]
+# Sem JWT: o convidado não tem sessão. Valida o token do convite.
+verify_jwt = false

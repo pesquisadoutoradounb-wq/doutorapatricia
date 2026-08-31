@@ -31,13 +31,15 @@ Deno.serve(async (req) => {
   const admin = supabaseAdmin();
   const v = await validarConvite(admin, body.token);
   if (!v.ok) {
-    const map: Record<number, string> = {
-      400: "token_invalido",
-      404: "token_invalido",
-      410: "token_expirado",
-      409: "ja_concluido",
-    };
-    return respostaJson({ erro: map[v.status] }, v.status, origin);
+    let erro: string;
+    if (v.status === 409) {
+      erro = v.motivo === "recusado" ? "convite_recusado" : "ja_concluido";
+    } else if (v.status === 410) {
+      erro = "token_expirado";
+    } else {
+      erro = "token_invalido";
+    }
+    return respostaJson({ erro }, v.status, origin);
   }
 
   const { convite } = v;

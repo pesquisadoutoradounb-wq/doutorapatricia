@@ -24,6 +24,7 @@ const ROTULO_STATUS: Record<string, string> = {
   expirado: "Expirado",
   inelegivel: "Inelegível",
   interrompido: "Interrompeu",
+  recusou: "Recusou",
 };
 
 const TOM_STATUS: Record<string, TomSelo> = {
@@ -34,6 +35,7 @@ const TOM_STATUS: Record<string, TomSelo> = {
   expirado: "neutro",
   inelegivel: "erro",
   interrompido: "aviso",
+  recusou: "neutro",
 };
 
 function data(s: string | null): string {
@@ -203,6 +205,7 @@ export function Convites() {
                   <th>Nome</th>
                   <th>Modo</th>
                   <th>Status</th>
+                  <th>Entrega do e-mail</th>
                   <th className="num">Enviado</th>
                   <th className="num">Expira</th>
                   <th></th>
@@ -229,6 +232,19 @@ export function Convites() {
                             não enviado
                           </Selo>
                         </>
+                      )}
+                    </td>
+                    <td>
+                      {c.email_aberto ? (
+                        <Selo tom="info">abriu</Selo>
+                      ) : c.email_entregue ? (
+                        <Selo tom="neutro">entregue</Selo>
+                      ) : c.modo === "piloto" ? (
+                        "—"
+                      ) : (
+                        <Selo tom="aviso" ponto={false}>
+                          sem registro
+                        </Selo>
                       )}
                     </td>
                     <td className="num">{data(c.enviado_em)}</td>
@@ -275,7 +291,7 @@ export function Convites() {
                 ))}
                 {convites.length === 0 && (
                   <tr>
-                    <td className="tabela__vazio" colSpan={7}>
+                    <td className="tabela__vazio" colSpan={8}>
                       Nenhum convite ainda.
                     </td>
                   </tr>

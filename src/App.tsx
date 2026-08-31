@@ -1,6 +1,7 @@
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ParticipanteLayout } from "./components/ParticipanteLayout";
 import { EntrarComToken } from "./routes/participar/EntrarComToken";
+import { RecusarConvite } from "./routes/participar/RecusarConvite";
 import { Informacoes } from "./routes/participar/Informacoes";
 import { Tcle } from "./routes/participar/Tcle";
 import { ViaTcle } from "./routes/participar/ViaTcle";
@@ -56,6 +57,7 @@ export function App() {
         {/* ---------- Participantes ---------- */}
         <Route path="/participar" element={<ParticipanteLayout />}>
           <Route index element={<NaoEncontrado contexto="participar" />} />
+          <Route path="recusar/:token" element={<RecusarConvite />} />
           <Route path=":token" element={<EntrarComToken />} />
           <Route path="informacoes" element={<Informacoes />} />
           <Route path="tcle" element={<Tcle />} />

@@ -50,6 +50,7 @@ export type MotivoFalha =
   | "token_invalido"
   | "token_expirado"
   | "ja_concluido"
+  | "convite_recusado"
   | "erro_rede";
 
 export type ResultadoEntrada =
@@ -73,10 +74,22 @@ export async function entrarComToken(token: string): Promise<ResultadoEntrada> {
       { body: { token } },
     );
     if (error) {
-      const status = (error as { context?: { status?: number } }).context?.status;
+      const ctx = (error as { context?: Response }).context;
+      const status = ctx?.status;
       if (status === 400 || status === 404) return { ok: false, motivo: "token_invalido" };
       if (status === 410) return { ok: false, motivo: "token_expirado" };
-      if (status === 409) return { ok: false, motivo: "ja_concluido" };
+      if (status === 409) {
+        let corpo: { erro?: string } = {};
+        try {
+          corpo = (await ctx?.clone().json()) ?? {};
+        } catch {
+          corpo = {};
+        }
+        return {
+          ok: false,
+          motivo: corpo.erro === "convite_recusado" ? "convite_recusado" : "ja_concluido",
+        };
+      }
       return { ok: false, motivo: "erro_rede" };
     }
     if (!data) return { ok: false, motivo: "erro_rede" };

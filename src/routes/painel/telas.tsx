@@ -43,6 +43,7 @@ export function DashboardEstudo() {
             <CartaoKPI valor={m.totalConvites} rotulo="Convites" />
             <CartaoKPI valor={m.totalParticipantes} rotulo="Participantes" />
             <CartaoKPI valor={m.concluidos} rotulo="Concluíram" />
+            <CartaoKPI valor={m.recusaram} rotulo="Recusaram" />
             <CartaoKPI
               valor={pct(m.taxaResposta)}
               rotulo="Taxa de resposta"

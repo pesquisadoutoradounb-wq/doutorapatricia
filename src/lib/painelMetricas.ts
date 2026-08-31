@@ -9,6 +9,7 @@ export interface MetricasEstudo {
   totalConvites: number;
   totalParticipantes: number;
   concluidos: number;
+  recusaram: number;
   taxaResposta: number; // participantes / convites
   taxaConclusao: number; // concluídos / participantes
   funil: { rotulo: string; valor: number }[];
@@ -24,6 +25,7 @@ const ROTULO_STATUS: Record<string, string> = {
   iniciado: "Iniciado",
   concluido: "Concluído",
   expirado: "Expirado",
+  recusou: "Recusou",
 };
 
 const ROTULO_ETAPA: Record<EtapaParticipante, string> = {
@@ -100,9 +102,10 @@ export async function carregarMetricas(
   // por status
   const statusMap = new Map<string, number>();
   for (const i of inv) statusMap.set(i.status, (statusMap.get(i.status) ?? 0) + 1);
-  const porStatus = ["enviado", "aberto", "iniciado", "concluido", "expirado"]
+  const porStatus = ["enviado", "aberto", "iniciado", "concluido", "expirado", "recusou"]
     .map((s) => ({ rotulo: ROTULO_STATUS[s], valor: statusMap.get(s) ?? 0 }))
     .filter((x) => x.valor > 0);
+  const recusaram = statusMap.get("recusou") ?? 0;
 
   // por etapa
   const etapaMap = new Map<string, number>();
@@ -143,6 +146,7 @@ export async function carregarMetricas(
     totalConvites,
     totalParticipantes,
     concluidos,
+    recusaram,
     taxaResposta: totalConvites ? totalParticipantes / totalConvites : 0,
     taxaConclusao: totalParticipantes ? concluidos / totalParticipantes : 0,
     funil: [

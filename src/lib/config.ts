@@ -63,3 +63,8 @@ export const config = {
 export function linkDeConvite(token: string): string {
   return `${config.appBaseUrl}/#${config.rotas.participante}/${token}`;
 }
+
+/** Monta o link de recusa ("não tenho interesse") para um token. */
+export function linkDeRecusa(token: string): string {
+  return `${config.appBaseUrl}/#${config.rotas.participante}/recusar/${token}`;
+}

@@ -13,6 +13,9 @@ export interface ConviteAdmin {
   expira_em: string | null;
   primeiro_acesso_em: string | null;
   criado_em: string;
+  /** camada de entrega do e-mail (webhook do Brevo) */
+  email_aberto: boolean;
+  email_entregue: boolean;
 }
 
 export interface ResultadoEnvio {
@@ -37,7 +40,32 @@ export async function listarConvites(
   if (!incluirPiloto) q = q.eq("modo", "producao");
   const { data, error } = await q;
   if (error || !data) return [];
-  return data as ConviteAdmin[];
+
+  const base = data as Omit<ConviteAdmin, "email_aberto" | "email_entregue">[];
+
+  // camada de entrega do e-mail (Brevo → email_events)
+  const abertos = new Set<string>();
+  const entregues = new Set<string>();
+  if (base.length > 0) {
+    const { data: eventos } = await supabase
+      .from("email_events")
+      .select("invite_id, tipo")
+      .in(
+        "invite_id",
+        base.map((c) => c.id),
+      );
+    for (const e of eventos ?? []) {
+      if (!e.invite_id) continue;
+      if (e.tipo === "aberto") abertos.add(e.invite_id);
+      else if (e.tipo === "entregue") entregues.add(e.invite_id);
+    }
+  }
+
+  return base.map((c) => ({
+    ...c,
+    email_aberto: abertos.has(c.id),
+    email_entregue: entregues.has(c.id),
+  }));
 }
 
 async function chamarSendInvite(

@@ -1,3 +1,7 @@
+// O especificador `jsr:` só resolve no Deno (runtime das Edge Functions). Na
+// compilação dos testes (vitest/tsc) o import de tipo é apagado — suprimimos o
+// TS2307 aqui para que `validarConvite` possa ser testado isoladamente.
+// @ts-ignore -- Deno-only
 import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
 const UUID_RE =
@@ -14,7 +18,8 @@ export interface Convite {
 
 export type ValidacaoConvite =
   | { ok: true; convite: Convite }
-  | { ok: false; status: 400 | 404 | 410 | 409 };
+  | { ok: false; status: 400 | 404 | 410 }
+  | { ok: false; status: 409; motivo: "concluido" | "recusado" };
 
 /**
  * Valida um token de convite usando o cliente admin (service_role).
@@ -38,7 +43,12 @@ export async function validarConvite(
 
   const convite = data as Convite;
 
-  if (convite.status === "concluido") return { ok: false, status: 409 };
+  if (convite.status === "concluido") {
+    return { ok: false, status: 409, motivo: "concluido" };
+  }
+  if (convite.status === "recusou") {
+    return { ok: false, status: 409, motivo: "recusado" };
+  }
 
   // A expiração vale apenas para quem AINDA NÃO começou. Se o participante já
   // acessou o link, ele pode continuar de onde parou em qualquer dispositivo,
